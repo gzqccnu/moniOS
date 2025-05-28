@@ -200,143 +200,152 @@ def get_network_usage():
             {'time': '12:00', 'rx': 0, 'tx': 0}
         ]
 
-# def get_iftop_data():
-#     """获取网络流量数据(使用psutil替代iftop)"""
-#     try:
-#         connections = []
-#         total_rx = 0
-#         total_tx = 0
-        
-#         # 获取网络连接信息
-#         net_connections = psutil.net_connections(kind='inet')
-#         for conn in net_connections:
-#             if conn.status == 'ESTABLISHED':
-#                 source = f"{conn.laddr.ip}:{conn.laddr.port}"
-#                 dest = f"{conn.raddr.ip}:{conn.raddr.port}" if conn.raddr else "unknown"
-                
-#                 # 获取进程信息
-#                 try:
-#                     p = psutil.Process(conn.pid)
-#                     process_name = p.name()
-#                 except:
-#                     process_name = "unknown"
-                
-#                 connections.append({
-#                     'source': source,
-#                     'destination': dest,
-#                     'process': process_name,
-#                     'sent': 'N/A',  # psutil不提供单个连接流量统计
-#                     'received': 'N/A',
-#                     'total': 'N/A'
-#                 })
-        
-#         # 获取总流量统计
-#         net_io = psutil.net_io_counters()
-#         total_rx = net_io.bytes_recv / (1024 * 1024)  # 转换为MB
-#         total_tx = net_io.bytes_sent / (1024 * 1024)  # 转换为MB
-        
-#         return {
-#             'connections': connections[:10],  # 只返回前10个连接
-#             'total_rx': round(total_rx, 2),
-#             'total_tx': round(total_tx, 2),
-#             'update_time': time.strftime("%H:%M:%S")
-#         }
-            
-#     except Exception as e:
-#         return {
-#             'error': 'Network monitoring error',
-#             'details': str(e),
-#             'solution': 'Ensure psutil is installed (pip install psutil)'
-#         }
+# {
 
-def get_iftop_data(duration=1.0, top_n=10):
+#         'connections': [
+
+#           {
+
+#             'source': 'ip:port',
+
+#             'destination': 'ip:port',
+
+#             'protocol': 'TCP'|'UDP',
+
+#             'sent': bytes,
+
+#             'received': bytes,
+
+#             'pid': int,
+
+#             'process': str
+
+#           }, ...
+
+#         ],
+
+#         'total_rx_mb': float,
+
+#         'total_tx_mb': float,
+
+#         'update_time': 'HH:MM:SS'
+
+#       }
+
+
+def get_iftop_data(duration: float = 1.0, top_n: int = 10):
     """
-    抓包 duration 秒，统计每条连接（本地IP:port -> 远端IP:port）的发送/接收流量。
-    返回字典：
+    抓包 duration 秒，统计每条连接（本地IP:port -> 远端IP:port）的发送/接收流量，
+    并关联 psutil.net_connections() 拿到的 pid/process 信息。
+
+    返回：
       {
         'connections': [
-           {
-             'source': ...,
-             'destination': ...,
-             'protocol': 'TCP' or 'UDP',
-             'sent': bytes,
-             'received': bytes
-           }, ...
+          {
+            'source': 'ip:port',
+            'destination': 'ip:port',
+            'protocol': 'TCP'|'UDP',
+            'sent': bytes,
+            'received': bytes,
+            'pid': int,
+            'process': str
+          }, ...
         ],
         'total_rx_mb': float,
         'total_tx_mb': float,
         'update_time': 'HH:MM:SS'
       }
     """
-    # 1) 收集本机所有 IPv4 地址
-    local_ips = set()
-    for addrs in psutil.net_if_addrs().values():
-        for addr in addrs:
-            if addr.family == socket.AF_INET:
-                local_ips.add(addr.address)
+    # 1) 收集所有本机 IPv4 地址
+    local_ips = {
+        addr.address
+        for addrs in psutil.net_if_addrs().values()
+        for addr in addrs
+        if addr.family == socket.AF_INET
+    }
 
-    # 2) 定义统计容器
-    #  key = (src_ip:src_port, dst_ip:dst_port, proto)
-    #  value = {'sent': bytes, 'received': bytes}
+    # 2) 用 Scapy 抓包，统计每条连接的流量
+    #    key = (laddr, raddr, proto)  value = {'sent':bytes,'received':bytes}
     counters = defaultdict(lambda: {'sent': 0, 'received': 0})
 
     def _pkt_cb(pkt):
         if IP not in pkt:
             return
-        ip = pkt[IP]
         proto = 'TCP' if TCP in pkt else ('UDP' if UDP in pkt else None)
-        if proto is None:
+        if not proto:
             return
 
-        # 五元组键
-        sport = pkt.sport if proto == 'UDP' else pkt[TCP].sport
-        dport = pkt.dport if proto == 'UDP' else pkt[TCP].dport
-        src = f"{ip.src}:{sport}"
-        dst = f"{ip.dst}:{dport}"
+        sport = pkt[TCP].sport if proto == 'TCP' else pkt[UDP].sport
+        dport = pkt[TCP].dport if proto == 'TCP' else pkt[UDP].dport
+        src_ip, dst_ip = pkt[IP].src, pkt[IP].dst
         plen = len(pkt)
 
-        if ip.src in local_ips:
-            # 本机发出
-            counters[(src, dst, proto)]['sent'] += plen
-        elif ip.dst in local_ips:
-            # 本机接收
-            counters[(src, dst, proto)]['received'] += plen
+        # 出站
+        if src_ip in local_ips:
+            laddr = f"{src_ip}:{sport}"
+            raddr = f"{dst_ip}:{dport}"
+            counters[(laddr, raddr, proto)]['sent'] += plen
+        # 入站
+        elif dst_ip in local_ips:
+            laddr = f"{dst_ip}:{dport}"
+            raddr = f"{src_ip}:{sport}"
+            counters[(laddr, raddr, proto)]['received'] += plen
 
-    # 3) 开始抓包
-    sniff(prn=_pkt_cb, timeout=duration)
+    sniff(prn=_pkt_cb, timeout=duration, store=False)
 
-    # 4) 获取全局网卡总量
+    # 3) 获取系统级总流量
     net_io = psutil.net_io_counters()
-    total_rx_mb = net_io.bytes_recv / (1024 * 1024)
-    total_tx_mb = net_io.bytes_sent / (1024 * 1024)
+    total_rx_mb = net_io.bytes_recv / 1024 / 1024
+    total_tx_mb = net_io.bytes_sent / 1024 / 1024
 
-    # 5) 构造前 top_n 条连接列表
-    #    按（sent+received）降序
-    conns = sorted(
-        (
-            {
-                'source': src,
-                'destination': dst,
-                'protocol': proto,
-                'sent': info['sent'],
-                'received': info['received']
-            }
-            for (src, dst, proto), info in counters.items()
-        ),
-        key=lambda x: x['sent'] + x['received'],
-        reverse=True
-    )[:top_n]
+    # 4) 构造每条连接的基础信息 + pid/process
+    conns = []
+    for conn in psutil.net_connections(kind='inet'):
+        if not conn.laddr or not conn.raddr:
+            continue
+        # 只看 ESTABLISHED 或 LISTEN
+        if conn.status not in (psutil.CONN_ESTABLISHED, psutil.CONN_LISTEN):
+            continue
+
+        laddr = f"{conn.laddr.ip}:{conn.laddr.port}"
+        raddr = f"{conn.raddr.ip}:{conn.raddr.port}"
+        proto = 'TCP' if conn.type == socket.SOCK_STREAM else 'UDP'
+        pid = conn.pid or -1
+        try:
+            pname = psutil.Process(pid).name() if pid > 0 else 'Unknown'
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pname = 'Unknown'
+
+        conns.append({
+            'source': laddr,
+            'destination': raddr,
+            'protocol': proto,
+            'sent': 0,
+            'received': 0,
+            'pid': pid,
+            'process': pname
+        })
+
+    # 5) 把抓包结果合并到每条连接上
+    #    通过 (source, destination, protocol) 三元组来匹配
+    for c in conns:
+        key = (c['source'], c['destination'], c['protocol'])
+        info = counters.get(key)
+        if info:
+            c['sent'] = info['sent']
+            c['received'] = info['received']
+
+    # 6) 取 top_n 条按流量总量排序
+    conns = sorted(conns, key=lambda x: x['sent'] + x['received'], reverse=True)[:top_n]
 
     return {
         'connections': conns,
         'total_rx_mb': round(total_rx_mb, 2),
         'total_tx_mb': round(total_tx_mb, 2),
-        'update_time': time.strftime("%H:%M:%S")
+        'update_time': time.strftime('%H:%M:%S')
     }
 
 if __name__ == '__main__':
-    data = get_iftop_data(duration=1.5, top_n=8)
-    from pprint import pprint
-    pprint(data)
-
-
+    import json
+    data = get_iftop_data(duration=2.0, top_n=10)
+    print(json.dumps(data, ensure_ascii=False, indent=2))
