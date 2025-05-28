@@ -1,82 +1,73 @@
-# 操作系统监控面板
+# moniOS
 
-这是一个基于Web的操作系统监控面板，提供了类似于htop、perf和osquery的功能，使您能够通过浏览器查看和分析Linux系统性能。
+A web-based operating system monitoring panel that provides functionality similar to `ps -ef`, `htop`, `iftop`, and `osquery`, 
+enabling you to view and analyze Linux system status through a browser.
 
-## 功能特点
+## Features
+- **System Overview**: Displays operating system information, resource usage, and network details
 
-- **系统概览**：显示操作系统信息、资源使用情况和网络信息
-- **进程监控**：类似于htop的进程监控器，可以查看和搜索系统进程
-- **性能分析**：类似于perf top的CPU性能分析工具
-- **系统查询**：基于osquery的SQL查询接口，可以通过SQL语句查询系统信息
-- **用户账户**：显示系统用户账户信息
-- **实时更新**：可以手动刷新获取最新数据
+- **Process Monitoring**: htop-like process monitor to view and search system processes
 
-## 系统要求
+- **Process View**: Provides detailed process/resource information and visualizations
 
-- Python 3.6+
-- Linux操作系统（推荐Ubuntu/Debian）
-- 可选：perf工具（`linux-tools-common`包）
-- 可选：osquery工具
+- **System Query**: SQL-based query interface using osquery to retrieve system information
 
-## 安装步骤
+- **User Accounts**: Shows system user account information
 
-1. 克隆或下载此仓库到您的Linux服务器
+- **Network Traffic Monitoring**: Real-time detailed network traffic visualization
 
-2. 安装依赖：
+## System Requirements
+- **Python 3.8+**
+
+- **Linux OS (Ubuntu/Debian recommended)**
+
+- **Required**: `osquery tool`
+
+## Installation Steps
+Clone or download this repository to your Linux server:
 
 ```bash
+git clone https://github.com/gzccnu/moniOS.git
+# Install Python dependencies:
 pip install -r requirements.txt
+# Install system tools:
+# Visit https://osquery.io/downloads for OS-specific packages and instructions
 ```
+> Usage
+> Start the server:
+> `python app.py`
+> Access via browser:
+> `http://localhost:6789`
 
-3. 安装可选的系统工具：
+## Special Notes
+> If osquery cannot be installed, simulated data will be used <br>
+> Network usage data is stored in history files for trend analysis
 
-```bash
-# 安装perf工具
-sudo apt-get update
-sudo apt-get install linux-tools-common linux-tools-generic
+## Developer Information
+- [gzccnu] https://github.com/gzqccnu
+- Contact: gzqccnu@gmail.com
+<br>
+To extend functionality, modify these files:
 
-# 安装osquery
-# 请访问 https://osquery.io/downloads 获取适合您系统的安装包和说明
-```
+- Modules in **utils/** implement various data collection functions
 
-## 使用方法
+- Module-specific CSS in **utils/css/**
 
-1. 启动服务器：
+- Module-specific JavaScript in **utils/js/**
 
-```bash
-python app.py
-```
+- **app.py** contains the Flask backend API
 
-2. 在浏览器中访问：
+- **static/js/api_client.js** handles frontend-API communication
 
-```
-http://localhost:6789
-```
+- **dashboard_os_info.html** is the frontend interface
 
-## 权限说明
+## Dependencies
+***osquery** (dual-licensed under Apache-2.0/GPL-2.0-only)*
+*License: **https://osquery.io/license***
+<br>
+*This project integrates using the **Apache-2.0 license***
 
-- 某些功能（如perf分析）需要root权限才能获取完整数据
-- 如需使用所有功能，建议使用sudo启动应用：
+## Security Considerations
+- The application listens on all network interfaces by default. For production deployments, implement authentication and firewall rules
 
-```bash
-sudo python app.py
-```
-
-## 特别说明
-
-- 如果不能安装perf或osquery，系统将使用模拟数据
-- 网络使用数据会保存在网络历史文件中，以提供趋势分析
-
-## 开发者信息
-
-如需扩展功能，可修改以下文件：
-
-- `utils/` 目录下的各模块实现了不同的数据采集功能
-- `app.py` 实现了Flask后端API
-- `static/js/api_client.js` 实现了前端与API的通信
-- `dashboard_os_info.html` 是前端界面
-
-## 安全注意事项
-
-- 此应用默认监听在所有网络接口上，如果部署在生产环境，请添加适当的认证和防火墙规则
-- osquery功能已经实现了SQL注入防护，但建议仍然只在安全环境中使用 # moniOS
+- SQL injection protection measures are implemented for osquery functions, but usage should still be restricted to secure environments
