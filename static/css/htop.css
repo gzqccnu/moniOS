@@ -1,0 +1,216 @@
+/* .htop-container {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    background-color: #1a1a1a;
+    color: #ddd;
+    padding: 24px;
+    border-radius: 12px;
+    overflow: auto;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.htop-header {
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.htop-header span {
+    margin-right: 18px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #2d2d2d;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.htop-header .highlight {
+    background-color: #2c3e50;
+    color: #3498db;
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.cpu-bars {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+}
+
+.cpu-bar {
+    height: 28px;
+    flex-grow: 1;
+    background-color: #2d2d2d;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.cpu-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+}
+
+.memory-bar {
+    height: 28px;
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.memory-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #f1c40f, #e74c3c);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+} */
+
+.htop-container {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    padding: 24px;
+    border-radius: 12px;
+    overflow: auto;
+    white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+}
+
+.htop-header {
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.htop-header span {
+    margin-right: 18px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.htop-header .highlight {
+    background-color: #e8f4ff;
+    color: #3498db;
+    font-weight: 600;
+    border: 1px solid #cce0ff;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.1);
+}
+
+.cpu-bars {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.cpu-bar {
+    height: 28px;
+    flex-grow: 1;
+    background-color: #f0f0f0;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+}
+
+.cpu-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.15);
+}
+
+.memory-bar {
+    height: 28px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+}
+
+.memory-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #f1c40f, #e74c3c);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.15);
+}
+
+/* 增强交互效果 */
+.htop-header span:hover {
+    background-color: #ebf5fb;
+    border-color: #bfe1f1;
+    transform: translateY(-1px);
+}
+
+/* 添加CPU条标签 */
+.cpu-bar::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #777;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* 添加内存/交换空间标签 */
+.memory-bar::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #777;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* 添加微动效 */
+.cpu-fill:hover,
+.memory-fill:hover {
+    transform: scaleX(1.02) scaleY(1.02);
+    transition: transform 0.3s ease;
+}

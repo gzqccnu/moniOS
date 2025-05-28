@@ -1,0 +1,44 @@
+/* 网络流量监控 */
+#iftop-section .card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 标题 */
+#iftop-section .page-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+/* 信息头部 */
+.iftop-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.iftop-meta strong {
+    color: #222;
+}
+
+/* 无数据提示 */
+.no-data {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
+/* 图表容器留白 */
+.traffic-chart {
+    margin-bottom: 1.5rem;
+}
