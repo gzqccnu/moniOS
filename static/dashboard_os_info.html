@@ -1405,52 +1405,50 @@
                             Object.assign(acc, data);
                     }
                     return acc;
-                }
-            , {}
-        );
+                }, {});
 
-        console.log(`从端点 ${endpoints.join(', ')} 获取数据成功`, combinedData);
+                console.log(`从端点 ${endpoints.join(', ')} 获取数据成功`, combinedData);
 
-        // 更新模型并刷新UI
-        updateDataBySection(endpoints, combinedData);
-        updateActiveSection();
+                // 更新模型并刷新UI
+                updateDataBySection(endpoints, combinedData);
+                updateActiveSection();
 
-        // 记录更新时间
-        appState.lastUpdateTime = Date.now();
-        updateLastUpdateTime();
-    } catch (error) {
-        console.error(`智能刷新出错:`, error);
-    } finally {
-        // 恢复刷新按钮状态
-        refreshBtn.textContent = originalText;
-        refreshBtn.disabled = false;
-        appState.isRefreshing = false;
-    }
-}
+                // 记录更新时间
+                appState.lastUpdateTime = Date.now();
+                        updateLastUpdateTime();
+                    } catch (error) {
+                        console.error(`智能刷新出错:`, error);
+                    } finally {
+                        // 恢复刷新按钮状态
+                        refreshBtn.textContent = originalText;
+                        refreshBtn.disabled = false;
+                        appState.isRefreshing = false;
+                    }
+        }
 
-// 根据端点和数据更新对应的数据模型
-function updateDataBySection(endpoints, data) {
-    // 当原始调用为单一字符串时，endpoints 也会是数组
-    if (endpoints.includes('/api/all_data')) {
-        // 全量更新
-        if (data.systemInfo) mockData.systemInfo = data.systemInfo;
-        if (data.resourceUsage) mockData.resourceUsage = data.resourceUsage;
-        if (data.networkInfo) mockData.networkInfo = data.networkInfo;
-        if (data.processes) mockData.processes = data.processes;
-        if (data.htopData) mockData.htopData = data.htopData;
-        if (data.users) mockData.users = data.users;
-        if (data.networkUsage) mockData.networkUsage = data.networkUsage;
-    } else {
-        // 针对多个细分端点更新
-        if (endpoints.includes('/api/system_info')) mockData.systemInfo = data.systemInfo;
-        if (endpoints.includes('/api/resource_usage')) mockData.resourceUsage = data.resourceUsage;
-        if (endpoints.includes('/api/network_info')) mockData.networkInfo = data.networkInfo;
-        if (endpoints.includes('/api/network_usage')) mockData.networkUsage = data.networkUsage;
-        if (endpoints.includes('/api/processes')) mockData.processes = data.processes;
-        if (endpoints.includes('/api/htop')) mockData.htopData = data.htopData;
-        if (endpoints.includes('/api/users')) mockData.users = data.users;
-    }
-}
+        // 根据端点和数据更新对应的数据模型
+        function updateDataBySection(endpoints, data) {
+            // 当原始调用为单一字符串时，endpoints 也会是数组
+            if (endpoints.includes('/api/all_data')) {
+                // 全量更新
+                if (data.systemInfo) mockData.systemInfo = data.systemInfo;
+                if (data.resourceUsage) mockData.resourceUsage = data.resourceUsage;
+                if (data.networkInfo) mockData.networkInfo = data.networkInfo;
+                if (data.processes) mockData.processes = data.processes;
+                if (data.htopData) mockData.htopData = data.htopData;
+                if (data.users) mockData.users = data.users;
+                if (data.networkUsage) mockData.networkUsage = data.networkUsage;
+            } else {
+                // 针对多个细分端点更新
+                if (endpoints.includes('/api/system_info')) mockData.systemInfo = data.systemInfo;
+                if (endpoints.includes('/api/resource_usage')) mockData.resourceUsage = data.resourceUsage;
+                if (endpoints.includes('/api/network_info')) mockData.networkInfo = data.networkInfo;
+                if (endpoints.includes('/api/network_usage')) mockData.networkUsage = data.networkUsage;
+                if (endpoints.includes('/api/processes')) mockData.processes = data.processes;
+                if (endpoints.includes('/api/htop')) mockData.htopData = data.htopData;
+                if (endpoints.includes('/api/users')) mockData.users = data.users;
+            }
+        }
 
         
         // 更新最后刷新时间显示

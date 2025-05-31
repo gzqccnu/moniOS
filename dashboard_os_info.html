@@ -95,9 +95,35 @@
         }
         
         /* htop进程视图使用等宽字体 */
-        .htop-container table {
+        .perf-table, .htop-container table {
             font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 13px;
+        }
+        
+        .perf-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            color: #333;
+            background-color: #fff;
+        }
+
+        .perf-table thead th {
+        background-color: #f9f9fb;
+        color: #444;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid #e0e0e0;
+        }
+
+        .perf-table tbody td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f0f0f0;
+        }
+
+        .perf-table tbody tr:hover {
+        background-color: #f5f8fa;
         }
         
         @media (max-width: 768px) {
@@ -382,8 +408,8 @@
                         <div class="iftop-meta">
                             <span>Last Update: <strong id="iftop-update-time">--:--:--</strong></span>
                             <span>Connections: <strong id="iftop-connection-count">0</strong></span>
-                            <span>Total RX: <strong id="iftop-total-rx">0 MB</strong></span>
-                            <span>Total TX: <strong id="iftop-total-tx">0 MB</strong></span>
+                            <span>Total RX: <strong id="iftop-total-rx">0 KB</strong></span>
+                            <span>Total TX: <strong id="iftop-total-tx">0 KB</strong></span>
                         </div>
                     </div>
 
