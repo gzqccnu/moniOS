@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/process.css">
     <link rel="stylesheet" href="/css/htop.css">
-    <!-- <link rel="stylesheet" href="/css/perf.css"> -->
     <link rel="stylesheet" href="/css/osquery.css">
     <link rel="stylesheet" href="/css/iftop.css">
 
@@ -95,37 +94,10 @@
             font-size: 14px;
         }
         
-        /* htop进程视图和性能视图使用等宽字体 */
-        .perf-table, .htop-container table {
+        /* htop进程视图使用等宽字体 */
+        .htop-container table {
             font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 13px;
-        }
-
-        /* 表格样式 */
-        .perf-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            color: #333;
-            background-color: #fff;
-        }
-
-        .perf-table thead th {
-            background-color: #f9f9fb;
-            color: #444;
-            font-weight: 600;
-            text-align: left;
-            padding: 12px 14px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .perf-table tbody td {
-            padding: 10px 14px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .perf-table tbody tr:hover {
-            background-color: #f5f8fa;
         }
         
         @media (max-width: 768px) {
@@ -346,31 +318,6 @@
                             </thead>
                             <tbody id="htop-processes">
                                 <!-- Process data will be added here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 性能视图 -->
-            <div class="content-section" id="perf-section">
-                <h1 class="page-title">性能视图</h1>
-                <div class="card">
-                    <div class="perf-container">
-                        <div class="perf-header">
-                            <p>Samples: <span id="perf-samples">0</span> of event 'cpu-cycles', Event count (approx.): <span id="perf-count">0</span></p>
-                        </div>
-                        
-                        <table class="perf-table">
-                            <thead>
-                                <tr>
-                                    <th>开销 %</th>
-                                    <th>共享对象</th>
-                                    <th>符号</th>
-                                </tr>
-                            </thead>
-                            <tbody id="perf-top-data">
-                                <!-- Perf data will be added here -->
                             </tbody>
                         </table>
                     </div>
