@@ -378,8 +378,8 @@ async function initIftop() {
         // 更新头部信息
         if (updateEl) updateEl.textContent = data.update_time || '--:--:--';
         if (countEl)  countEl.textContent  = (data.connections || []).length;
-        if (rxEl)     rxEl.textContent     = `${data.total_rx_mb || 0} MB`;
-        if (txEl)     txEl.textContent     = `${data.total_tx_mb || 0} MB`;
+        if (rxEl)     rxEl.textContent     = `${data.total_rx_mb || 0} bytes`;
+        if (txEl)     txEl.textContent     = `${data.total_tx_mb || 0} bytes`;
 
         // 填充连接表格
         const conns = data.connections || [];
@@ -419,14 +419,14 @@ const trafficChart = new Chart(trafficCtx, {
         labels: [],
         datasets: [
         {
-            label: 'Total Received (MB)',
+            label: 'Total Received (bytes)',
             data: [],
             borderColor: '#3498db',
             backgroundColor: 'rgba(52, 152, 219, 0.1)',
             tension: 0.1
         },
         {
-            label: 'Total Sent (MB)',
+            label: 'Total Sent (bytes)',
             data: [],
             borderColor: '#2ecc71',
             backgroundColor: 'rgba(46, 204, 113, 0.1)',
@@ -441,7 +441,7 @@ const trafficChart = new Chart(trafficCtx, {
             beginAtZero: true,
             title: {
             display: true,
-            text: 'MB'
+            text: 'bytes'
             }
         }
         }
@@ -472,8 +472,8 @@ async function updateIftopData() {
         // 更新头部信息
         document.getElementById('iftop-update-time').textContent = data.update_time || '--:--:--';
         document.getElementById('iftop-connection-count').textContent = (data.connections || []).length;
-        document.getElementById('iftop-total-rx').textContent = `${data.total_rx_mb || 0} MB`;
-        document.getElementById('iftop-total-tx').textContent = `${data.total_tx_mb || 0} MB`;
+        document.getElementById('iftop-total-rx').textContent = `${data.total_rx_mb || 0} bytes`;
+        document.getElementById('iftop-total-tx').textContent = `${data.total_tx_mb || 0} bytes`;
 
         // 更新 Chart 数据
         const now = new Date();

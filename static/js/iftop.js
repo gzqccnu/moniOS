@@ -5,14 +5,14 @@ const trafficChart = new Chart(trafficCtx, {
         labels: [],
         datasets: [
             {
-                label: 'Received (KB/s)',
+                label: 'Received (bytes/s)',
                 data: [],
                 borderColor: '#3498db',
                 backgroundColor: 'rgba(52, 152, 219, 0.1)',
                 tension: 0.1
             },
             {
-                label: 'Sent (KB/s)',
+                label: 'Sent (bytes/s)',
                 data: [],
                 borderColor: '#2ecc71',
                 backgroundColor: 'rgba(46, 204, 113, 0.1)',
@@ -27,7 +27,7 @@ const trafficChart = new Chart(trafficCtx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'KB/s'
+                    text: 'bytes/s'
                 }
             }
         }
