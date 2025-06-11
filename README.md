@@ -27,7 +27,7 @@ enabling you to view and analyze Linux system status through a browser.
 Clone or download this repository to your Linux server:
 
 ```bash
-git clone https://github.com/gzccnu/moniOS.git
+git clone https://github.com/gzqccnu/moniOS.git
 cd moniOS
 # Install Python dependencies:
 pip install -r requirements.txt
