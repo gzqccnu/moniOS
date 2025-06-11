@@ -28,6 +28,7 @@ Clone or download this repository to your Linux server:
 
 ```bash
 git clone https://github.com/gzccnu/moniOS.git
+cd moniOS
 # Install Python dependencies:
 pip install -r requirements.txt
 # Install system tools:
