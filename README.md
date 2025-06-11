@@ -21,7 +21,7 @@ enabling you to view and analyze Linux system status through a browser.
 
 - **Linux OS (Ubuntu/Debian recommended)**
 
-- **Required**: `osquery tool`
+- **Required**: `osquery`
 
 ## Installation Steps
 Clone or download this repository to your Linux server:
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 > Network usage data is stored in history files for trend analysis
 
 ## Developer Information
-- [gzccnu] https://github.com/gzqccnu
+- [gzqccnu] https://github.com/gzqccnu
 - Contact: gzqccnu@gmail.com
 <br>
 To extend functionality, modify these files:
