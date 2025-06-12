@@ -23,31 +23,39 @@ def is_osquery_available():
 
 def sanitize_query(query):
     """净化SQL查询，防止执行危险命令"""
-    # 检查查询是否以SELECT开头
-    if not re.match(r'^\s*SELECT', query, re.IGNORECASE):
-        raise ValueError("只允许执行SELECT查询")
+    # 检查查询是否以点命令或SELECT开头
+    if not re.match(r'^\s*(?:\.|SELECT)', query, re.IGNORECASE):
+        raise ValueError("只允许执行点命令或SELECT查询")
     
     # 检查是否有多条SQL语句（由分号分隔）
     statements = [s.strip() for s in query.split(';') if s.strip()]
     if len(statements) > 1:
-        statements = [s for s in statements if re.match(r'^\s*SELECT', s, re.IGNORECASE)]
-        if len(statements) > 1:
-            raise ValueError("一次只能执行一条SELECT查询")
-        query = statements[0] + ';'
+        # 允许混合点命令和SELECT语句
+        allowed_statements = []
+        for s in statements:
+            if re.match(r'^\s*(?:\.|SELECT)', s, re.IGNORECASE):
+                allowed_statements.append(s)
+            else:
+                raise ValueError(f"包含非法的语句: {s}")
+        query = ';'.join(allowed_statements)
+    elif query.strip().startswith('.') and not query.endswith(';'):
+        # 点命令不需要分号
+        pass
     elif not query.endswith(';'):
+        # SELECT语句需要分号
         query += ';'
     
-    # 检查是否包含危险关键词
-    dangerous_keywords = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE']
-    for keyword in dangerous_keywords:
-        pattern = r'\b' + keyword + r'\b'
-        if re.search(pattern, query, re.IGNORECASE):
-            raise ValueError(f"查询包含不允许的关键词: {keyword}")
+    # 检查是否包含危险关键词（仅对SELECT语句）
+    if query.strip().upper().startswith('SELECT'):
+        dangerous_keywords = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE']
+        for keyword in dangerous_keywords:
+            pattern = r'\b' + keyword + r'\b'
+            if re.search(pattern, query, re.IGNORECASE):
+                raise ValueError(f"查询包含不允许的关键词: {keyword}")
     
     return query
 
 def execute_osquery(query):
-    """执行osquery SQL查询"""
     if not is_osquery_available():
         return handle_osquery_unavailable(query)
     
@@ -56,9 +64,11 @@ def execute_osquery(query):
         safe_query = sanitize_query(query)
         
         # 执行osquery命令
-        cmd = ['osqueryi', '--json', safe_query]
+        cmd = ['osqueryi', '--json', safe_query] if safe_query.strip().lower().startswith('select') \
+              else ['osqueryi', safe_query]
+        
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate(timeout=30)  # 设置超时时间为30秒
+        stdout, stderr = process.communicate(timeout=30)
         
         if process.returncode != 0:
             error_msg = stderr.decode('utf-8', errors='ignore')
@@ -67,22 +77,22 @@ def execute_osquery(query):
         
         output = stdout.decode('utf-8', errors='ignore')
         
+        # 点命令返回文本结果
+        if safe_query.startswith('.'):
+            return {'text': output}
+        
         try:
             # 尝试解析JSON输出
-            result = json.loads(output)
-            return result
+            return json.loads(output)
         except json.JSONDecodeError:
             # 如果不是JSON格式，返回原始文本
             return [{'result': output}]
         
     except ValueError as e:
-        # 查询验证失败
         return {'error': str(e)}
     except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
-        # 执行命令失败
         return {'error': f"执行查询超时或失败: {str(e)}"}
     except Exception as e:
-        # 其他错误
         return {'error': f"执行查询时发生错误: {str(e)}"}
 
 def mock_osquery_result(query):
