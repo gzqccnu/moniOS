@@ -21,13 +21,13 @@ enabling you to view and analyze Linux system status through a browser.
 
 - **Linux OS (Ubuntu/Debian recommended)**
 
-- **Required**: `osquery tool`
+- **Required**: `osquery`
 
 ## Installation Steps
 Clone or download this repository to your Linux server:
 
 ```bash
-git clone https://github.com/gzccnu/moniOS.git
+git clone https://github.com/gzqccnu/moniOS.git
 cd moniOS
 # Install Python dependencies:
 pip install -r requirements.txt
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 > Network usage data is stored in history files for trend analysis
 
 ## Developer Information
-- [gzccnu] https://github.com/gzqccnu
+- [gzqccnu] https://github.com/gzqccnu
 - Contact: gzqccnu@gmail.com
 <br>
 To extend functionality, modify these files:
@@ -63,7 +63,7 @@ To extend functionality, modify these files:
 - **dashboard_os_info.html** is the frontend interface
 
 ## Dependencies
-***osquery** (dual-licensed under Apache-2.0/GPL-2.0-only)*
+*[**osquery**](https://github.com/osquery/osquery) (dual-licensed under Apache-2.0/GPL-2.0-only)*
 *License: **https://osquery.io/license***
 <br>
 *This project integrates using the **Apache-2.0 license***
