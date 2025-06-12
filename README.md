@@ -42,8 +42,8 @@ pip install -r requirements.txt
 
 ## Special Notes
 > If osquery cannot be installed, simulated data will be used. <br>
-> Network usage data will be stored in history files for trend analysis as well as get network data successfully.
-> SQL query in the original code, you couldn't execute other SQL otherwise `SELECT` and special command of osquery like ".tables".
+> Network usage data will be stored in history files for trend analysis as well as get network data successfully.<br>
+> SQL query in the original code, you couldn't execute other SQL otherwise `SELECT` and special command of osquery like ".tables".<br>
 > however you can modify the code to remove the restrictions in /utils/osquery-handler.py. 
 
 ## Developer Information
