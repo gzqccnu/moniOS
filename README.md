@@ -1,6 +1,6 @@
 # moniOS
 
-A web-based operating system monitoring panel that provides functionality similar to `ps -ef`, `htop`, `iftop`, and `osquery`, 
+A web-based operating system monitoring panel that provides functionality similar to `uname -a`, `ps -ef`, `htop`, `iftop`, and `osquery`, 
 enabling you to view and analyze Linux system status through a browser.
 
 ## Features
@@ -42,7 +42,10 @@ pip install -r requirements.txt
 
 ## Special Notes
 > If osquery cannot be installed, simulated data will be used <br>
-> Network usage data is stored in history files for trend analysis
+> Network usage data will be stored in history files for trend analysis as well as get network data successfully.
+> SQL query in the original code, you couldn't execute other SQL otherwise `SELECT` and special command of osquery like ".tables".
+> > [!NOTE]
+> > you can modify the code to remove the restrictions in /utils/osquery-handler.py 
 
 ## Developer Information
 - [gzqccnu] https://github.com/gzqccnu
@@ -61,6 +64,7 @@ To extend functionality, modify these files:
 - **static/js/api_client.js** handles frontend-API communication
 
 - **dashboard_os_info.html** is the frontend interface
+  > you can add new navbar here.
 
 ## Dependencies
 *[**osquery**](https://github.com/osquery/osquery) (dual-licensed under Apache-2.0/GPL-2.0-only)*
