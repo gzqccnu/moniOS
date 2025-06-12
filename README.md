@@ -63,7 +63,7 @@ To extend functionality, modify these files:
 - **dashboard_os_info.html** is the frontend interface
 
 ## Dependencies
-***osquery** (dual-licensed under Apache-2.0/GPL-2.0-only)*
+*[**osquery**](https://github.com/osquery/osquery) (dual-licensed under Apache-2.0/GPL-2.0-only)*
 *License: **https://osquery.io/license***
 <br>
 *This project integrates using the **Apache-2.0 license***
