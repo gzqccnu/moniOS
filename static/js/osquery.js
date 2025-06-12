@@ -49,87 +49,71 @@ async function runOSQuery() {
 }
 
 // 显示所有可用表格列表
-function displayTablesList(container) {
-    container.innerHTML = '';
-    
-    // OSQuery 表格列表
-    const tables = [
-        "acpi_tables", "apparmor_events", "apparmor_profiles", "apt_sources", "arp_cache", 
-        "augeas", "authorized_keys", "azure_instance_metadata", "azure_instance_tags", 
-        "block_devices", "bpf_process_events", "bpf_socket_events", "carbon_black_info", 
-        "carves", "certificates", "chrome_extension_content_scripts", "chrome_extensions", 
-        "cpu_info", "cpu_time", "crontab", "curl", "curl_certificate", "deb_packages", 
-        "device_file", "device_hash", "device_partitions", "disk_encryption", "dns_resolvers", 
-        "docker_container_envs", "docker_container_fs_changes", "docker_container_labels", 
-        "docker_container_mounts", "docker_container_networks", "docker_container_ports", 
-        "docker_container_processes", "docker_container_stats", "docker_containers", 
-        "docker_image_history", "docker_image_labels", "docker_image_layers", "docker_images", 
-        "docker_info", "docker_network_labels", "docker_networks", "docker_version", 
-        "docker_volume_labels", "docker_volumes", "ec2_instance_metadata", "ec2_instance_tags", 
-        "etc_hosts", "etc_protocols", "etc_services", "extended_attributes", "file", 
-        "file_events", "firefox_addons", "groups", "hardware_events", "hash", "intel_me_info", 
-        "interface_addresses", "interface_details", "interface_ipv6", "iptables", "kernel_info", 
-        "kernel_keys", "kernel_modules", "known_hosts", "last", "listening_ports", "load_average", 
-        "logged_in_users", "lxd_certificates", "lxd_cluster", "lxd_cluster_members", "lxd_images", 
-        "lxd_instance_config", "lxd_instance_devices", "lxd_instances", "lxd_networks", 
-        "lxd_storage_pools", "magic", "md_devices", "md_drives", "md_personalities", 
-        "memory_array_mapped_addresses", "memory_arrays", "memory_device_mapped_addresses", 
-        "memory_devices", "memory_error_info", "memory_info", "memory_map", "mounts", "msr", 
-        "npm_packages", "oem_strings", "os_version", "osquery_events", "osquery_extensions", 
-        "osquery_flags", "osquery_info", "osquery_packs", "osquery_registry", "osquery_schedule", 
-        "pci_devices", "platform_info", "portage_keywords", "portage_packages", "portage_use", 
-        "process_envs", "process_events", "process_file_events", "process_memory_map", 
-        "process_namespaces", "process_open_files", "process_open_pipes", "process_open_sockets", 
-        "processes", "prometheus_metrics", "python_packages", "routes", "rpm_package_files", 
-        "rpm_packages", "seccomp_events", "secureboot", "selinux_events", "selinux_settings", 
-        "shadow", "shared_memory", "shell_history", "smbios_tables", "socket_events", 
-        "ssh_configs", "startup_items", "sudoers", "suid_bin", "syslog_events", "system_controls", 
-        "system_info", "systemd_units", "time", "ulimit_info", "uptime", "usb_devices", 
-        "user_events", "user_groups", "user_ssh_keys", "users", "vscode_extensions", "yara", 
-        "yara_events", "ycloud_instance_metadata", "yum_sources"
-    ];
-    
-    // 创建表格列表显示
-    const tablesDiv = document.createElement('div');
-    tablesDiv.style.columnCount = 3;
-    tablesDiv.style.columnGap = '20px';
-    tablesDiv.style.fontFamily = "'JetBrains Mono', monospace";
-    tablesDiv.style.fontSize = '13px';
-    tablesDiv.style.lineHeight = '1.6';
-    
-    tables.forEach(table => {
-        const tableItem = document.createElement('div');
-        tableItem.textContent = `=> ${table}`;
-        tableItem.style.color = '#98c379';
-        tableItem.style.cursor = 'pointer';
-        tableItem.style.padding = '2px 0';
-        
-        // 添加点击事件，点击表名时自动填充对应的查询
-        tableItem.addEventListener('click', () => {
-            document.getElementById('osquery-input').value = `SELECT * FROM ${table} LIMIT 10;`;
-        });
-        
-        tablesDiv.appendChild(tableItem);
+async function displayTablesList(container) {
+  container.innerHTML = '';
+
+  // 标题 + 说明
+  const header = document.createElement('div');
+  header.textContent = '可用表格列表:';
+  header.style.cssText = 'font-size:16px;font-weight:bold;margin-bottom:10px;color:#61afef';
+  const description = document.createElement('div');
+  description.textContent = '点击表名可快速生成查询示例。';
+  description.style.cssText = 'margin-bottom:15px;font-size:13px;color:#abb2bf';
+  container.append(header, description);
+
+  // 1) 发 POST 请求到 /api/osquery，query=".tables"
+  let tables = [];
+  try {
+    const resp = await fetch('/api/osquery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '.tables' })
     });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      throw new Error(data.error || `HTTP ${resp.status}`);
+    }
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    // 2) 后端会把 .tables 的输出放在 data.text 里，逐行拆分并取 "=> xxx"
+    const lines = (data.text || '').split('\n');
+    tables = lines
+      .map(l => l.trim())
+      .filter(l => l.startsWith('=>'))
+      .map(l => l.replace(/^=>\s*/, '').trim());
     
-    // 创建标题和说明
-    const header = document.createElement('div');
-    header.textContent = 'OSQuery 可用表格列表:';
-    header.style.fontSize = '16px';
-    header.style.fontWeight = 'bold';
-    header.style.marginBottom = '10px';
-    header.style.color = '#61afef';
-    
-    const description = document.createElement('div');
-    description.textContent = '点击表名可快速生成查询示例。';
-    description.style.marginBottom = '15px';
-    description.style.fontSize = '13px';
-    description.style.color = '#abb2bf';
-    
-    // 添加到结果容器
-    container.appendChild(header);
-    container.appendChild(description);
-    container.appendChild(tablesDiv);
+    if (!tables.length) {
+      throw new Error('返回结果中未找到任何表名');
+    }
+  } catch (e) {
+    container.innerHTML = `<div style="color:#e06c75">获取表列表失败：${e.message}</div>`;
+    return;
+  }
+
+  // 3) 渲染成三列可点列表
+  const tablesDiv = document.createElement('div');
+  tablesDiv.style.cssText = [
+    'column-count:3',
+    'column-gap:20px',
+    "font-family:'JetBrains Mono',monospace",
+    'font-size:13px',
+    'line-height:1.6',
+  ].join(';');
+  
+  tables.forEach(table => {
+    const item = document.createElement('div');
+    item.textContent = `=> ${table}`;
+    item.style.cssText = 'color:#98c379;cursor:pointer;padding:2px 0';
+    item.addEventListener('click', () => {
+      document.getElementById('osquery-input').value = `SELECT * FROM ${table} LIMIT 10;`;
+    });
+    tablesDiv.appendChild(item);
+  });
+
+  container.appendChild(tablesDiv);
 }
 
 // 格式化socket_events查询结果
