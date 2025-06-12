@@ -41,11 +41,10 @@ pip install -r requirements.txt
 > `http://localhost:6789`
 
 ## Special Notes
-> If osquery cannot be installed, simulated data will be used <br>
+> If osquery cannot be installed, simulated data will be used. <br>
 > Network usage data will be stored in history files for trend analysis as well as get network data successfully.
 > SQL query in the original code, you couldn't execute other SQL otherwise `SELECT` and special command of osquery like ".tables".
-> > [!NOTE]
-> > you can modify the code to remove the restrictions in /utils/osquery-handler.py 
+> however you can modify the code to remove the restrictions in /utils/osquery-handler.py. 
 
 ## Developer Information
 - [gzqccnu] https://github.com/gzqccnu
