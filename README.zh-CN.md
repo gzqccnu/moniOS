@@ -1,6 +1,6 @@
 # moniOS
 
-一个基于 Web 的操作系统监控面板，提供类似 `ps -ef`、`htop`、`iftop` 和 `osquery` 的功能，能够通过浏览器查看和分析 Linux 系统状态。
+一个基于 Web 的操作系统监控面板，提供类似 `uname -a`、`ps -ef`、`htop`、`iftop` 和 `osquery` 的功能，能够通过浏览器查看和分析 Linux 系统状态。
 
 ## 功能
 - **系统概览**：显示操作系统信息、资源使用情况和网络详情
@@ -39,14 +39,28 @@ pip install -r requirements.txt
 > `python app.py`
 > 在浏览器中访问：
 > `http://localhost:6789`
+# 安装系统工具：
+# 访问 https://osquery.io/downloads 获取操作系统特定的安装包和说明
+````
+
+> 使用方法
+> 启动服务器：
+> `python app.py`
+> 在浏览器中访问：
+> `http://localhost:6789`
 
 ## 特别说明
-> 网络使用数据将存储在历史文件中以便趋势分析
+
+> 网络使用数据将存储在历史文件中，以便进行趋势分析并成功获取网络数据。
+> 原始代码中的 SQL 查询只能执行 `SELECT` 及 osquery 的特殊命令（如 `.tables`），无法执行其他 SQL。
+> 如果需要，可在 `/utils/osquery-handler.py` 中修改代码以移除这些限制。
 
 ## 开发者信息
 
 * \[gzqccnu] [https://github.com/gzqccnu](https://github.com/gzqccnu)
 * 联系方式：[gzqccnu@gmail.com](mailto:gzqccnu@gmail.com)
+
+  <br>
 
 要扩展功能，请修改以下文件：
 
@@ -56,6 +70,7 @@ pip install -r requirements.txt
 * **app.py**：Flask 后端 API
 * **static/js/api\_client.js**：前端与 API 的通信
 * **dashboard\_os\_info.html**：前端界面
+
 
 ## 依赖
 
@@ -67,4 +82,3 @@ pip install -r requirements.txt
 
 * 应用默认监听所有网络接口。生产部署时请实施身份验证和防火墙规则
 * 对 osquery 功能已做 SQL 注入防护，但仍建议仅在安全环境中使用
-
