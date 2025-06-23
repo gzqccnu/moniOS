@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Web终端 | moniOS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/xterm@5.1.0/css/xterm.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/terminal.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/status.css">
+    <link rel="stylesheet" href="/css/refresh.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- 添加Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 确保侧边栏状态指示器样式与其他页面一致 */
+        .sidebar .status-indicator {
+            display: flex ;
+            flex-direction: row ;
+            align-items: center ;
+            margin-top: 10px;
+        }
+        
+        .sidebar .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+            display: inline-block !important;
+        }
+        
+        .sidebar .status-text {
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>操作系统监控面板</h1>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span class="status-text">已连接</span>
+            </div>
+            <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
+            
+            <!-- 添加自动刷新开关 -->
+            <div class="auto-refresh-container">
+                <span class="auto-refresh-label">自动刷新</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="auto-refresh-toggle" onchange="toggleAutoRefresh()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="countdown-container">
+                下次刷新: <span id="refresh-countdown">--</span>
+            </div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item" onclick="window.location.href='/'">
+                <span class="nav-item-text">仪表盘概览</span>
+            </li>
+            <li class="nav-item" onclick="window.location.href='/#processes-section'">
+                <span class="nav-item-text">进程监控</span>
+            </li>
+            <li class="nav-item" onclick="window.location.href='/#htop-section'">
+                <span class="nav-item-text">进程视图</span>
+            </li>
+            <li class="nav-item" onclick="window.location.href='/#users-section'">
+                <span class="nav-item-text">账户视图</span>
+            </li>
+            <li class="nav-item" onclick="window.location.href='/#osquery-section'">
+                <span class="nav-item-text">系统信息查询</span>
+            </li>
+            <li class="nav-item" onclick="window.location.href='/#iftop-section'">
+                <span class="nav-item-text">网络流量监控</span>
+            </li>
+            <li class="nav-item active" onclick="window.location.href='/terminal'">
+                <span class="nav-item-text">SSH终端</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1 class="page-title">SSH终端</h1>
+            <div class="main-content" id="terminal-section">
+                <!-- 连接设置面板 -->
+                <div class="connection-panel fullscreen" id="connection-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-server"></i> 连接设置
+                    </h2>
+                    <form id="connection-form">
+                        <div class="form-group">
+                            <label for="hostname">主机地址</label>
+                            <input type="text" id="hostname" placeholder="例如: 192.168.1.100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="port">端口</label>
+                            <input type="number" id="port" placeholder="22" value="22" min="1" max="65535" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" id="username" placeholder="例如: root" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" required>
+                        </div>
+                        <button type="submit" class="btn-connect">
+                            <i class="fas fa-plug"></i> 连接
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- 终端容器 -->
+                <div class="terminal-container hidden fullscreen" id="terminal-container">
+                    <div class="terminal-header">
+                        <h3>
+                            <i class="fas fa-terminal"></i> 终端
+                            <span class="status-indicator"></span>
+                            <span id="connection-info"></span>
+                        </h3>
+                        <div class="terminal-controls">
+                            <button id="clear-btn">
+                                <i class="fas fa-eraser"></i> 清屏
+                            </button>
+                            <button id="disconnect-btn">
+                                <i class="fas fa-plug-circle-xmark"></i> 断开连接
+                            </button>
+                        </div>
+                    </div>
+                    <div id="terminal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
+    <script src="/js/terminal.js"></script>
+    <script src="/js/sidebar.js"></script>
+</body>
+</html> 
