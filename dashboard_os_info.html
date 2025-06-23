@@ -13,6 +13,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     
+    <!-- 添加终端所需依赖 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/xterm@5.1.0/css/xterm.css">
+    
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/status.css">
     <link rel="stylesheet" href="/css/refresh.css">
@@ -22,8 +26,23 @@
     <link rel="stylesheet" href="/css/htop.css">
     <link rel="stylesheet" href="/css/osquery.css">
     <link rel="stylesheet" href="/css/iftop.css">
-
+    <link rel="stylesheet" href="/css/terminal.css">
     <style>
+        /* 加载本地字体 */
+        @font-face {
+            font-family: 'Cascadia Code';
+            src: url("/terminal/Cascadia-Code-Regular-2.ttf") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Cascadia Code';
+            src: url("/terminal/Cascadia-Code-Regular-2.ttf") format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        
         body {
             font-family: 'Inter', 'Noto Sans SC', 'Segoe UI', 'Arial', sans-serif;
             margin: 0;
@@ -119,6 +138,42 @@
             }
         }
 
+        /* 修复状态指示器竖排问题 */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap; /* 防止文字换行 */
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            display: inline-block;
+        }
+
+        .status-text, .last-update {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* 确保所有状态文本横向排列 */
+        .status-text, .last-update, #sidebar-last-update {
+            writing-mode: horizontal-tb !important;
+            text-orientation: mixed !important;
+        }
+
+        /* 确保所有文本横向显示 */
+        body, .nav-item, .card, .data-list, .performance-bar, 
+        .htop-container, .perf-table, .iftop-meta, 
+        .terminal-header, #connection-info {
+            writing-mode: horizontal-tb;
+            text-orientation: mixed;
+        }
+
     </style>
 </head>
 
@@ -129,6 +184,7 @@
             <div class="status-indicator">
                 <div class="status-dot"></div>
                 <span class="status-text">已连接</span>
+                <span class="last-update">最后更新: <span id="sidebar-last-update">--:--:--</span></span>
             </div>
             <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
             
@@ -164,8 +220,12 @@
             <li class="nav-item" onclick="openSection('iftop-section')">
                 <span class="nav-item-text">网络流量监控</span>
             </li>
+            <li class="nav-item" onclick="openSection('terminal-section')">
+                <span class="nav-item-text">SSH终端</span>
+            </li>
         </ul>
     </div>
+  
     
     <div class="main-content">
         <div class="container">
@@ -408,13 +468,70 @@
                 </div>
             </div>
 
-
+            <!-- SSH终端 -->
+            <div class="content-section" id="terminal-section">
+                <h1 class="page-title">SSH终端</h1>
+                <div class="main-content" id="terminal-content">
+                    <!-- 连接设置面板 -->
+                    <div class="connection-panel fullscreen" id="connection-panel">
+                        <h2 class="panel-title">
+                            <i class="fas fa-server"></i> 连接设置
+                        </h2>
+                        <form id="connection-form">
+                                        <div class="form-group">
+                <label for="ssh_hostname">主机地址</label>
+                <input type="text" id="ssh_hostname" placeholder="例如: 192.168.1.100" required>
+            </div>
+                            <div class="form-group">
+                                <label for="port">端口</label>
+                                <input type="number" id="port" placeholder="22" value="22" min="1" max="65535" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">用户名</label>
+                                <input type="text" id="username" placeholder="例如: root" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">密码</label>
+                                <input type="password" id="password" required>
+                            </div>
+                            <button type="submit" class="btn-connect">
+                                <i class="fas fa-plug"></i> 连接
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- 终端容器 -->
+                    <div class="terminal-container hidden fullscreen" id="terminal-container">
+                        <div class="terminal-header">
+                            <h3>
+                                <i class="fas fa-terminal"></i> 终端
+                                <span class="status-indicator"></span>
+                                <span id="connection-info"></span>
+                            </h3>
+                            <div class="terminal-controls">
+                                <button id="clear-btn">
+                                    <i class="fas fa-eraser"></i> 清屏
+                                </button>
+                                <button id="disconnect-btn">
+                                    <i class="fas fa-plug-circle-xmark"></i> 断开连接
+                                </button>
+                            </div>
+                        </div>
+                        <div id="terminal"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
     <script src="/js/api_client.js"></script>
     <script src="/js/network-chart.js"></script>
     <script src="/js/osquery.js"></script>
     <script src="/js/main.js"></script>
-    </body>
+    <script src="/js/terminal.js"></script>
+    <script src="/js/sidebar.js"></script>
+</body>
 </html>
