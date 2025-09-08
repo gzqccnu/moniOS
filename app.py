@@ -1,3 +1,6 @@
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -86,12 +89,12 @@ def debug_cpu_info():
             'platform_node': platform.node(),
             'platform_uname': platform.uname()._asdict(),
         }
-        
+
         # 尝试获取系统特定的CPU信息
         if system == 'Linux':
             cpu_info = get_cpu_info_linux()
             result['get_cpu_info_linux'] = cpu_info
-            
+
             # 尝试直接获取/proc/cpuinfo内容
             if os.path.exists('/proc/cpuinfo'):
                 try:
@@ -99,7 +102,7 @@ def debug_cpu_info():
                         cpuinfo_content = f.read()
                         result['proc_cpuinfo_exists'] = True
                         result['proc_cpuinfo_sample'] = cpuinfo_content[:1000]  # 前1000个字符
-                        
+
                         # 解析字段
                         field_values = {}
                         for line in cpuinfo_content.splitlines():
@@ -111,31 +114,31 @@ def debug_cpu_info():
                     result['proc_cpuinfo_error'] = str(e)
             else:
                 result['proc_cpuinfo_exists'] = False
-            
+
             # 尝试执行lscpu命令
             try:
                 lscpu_output = subprocess.check_output('lscpu', shell=True).decode('utf-8', errors='ignore')
                 result['lscpu_output'] = lscpu_output[:1000]  # 前1000个字符
             except Exception as e:
                 result['lscpu_error'] = str(e)
-                
+
         elif system == 'Windows':
             result['get_cpu_info_windows'] = get_cpu_info_windows()
-            
+
             # 尝试使用wmic命令
             try:
                 wmic_output = subprocess.check_output('wmic cpu get name', shell=True).decode('utf-8', errors='ignore')
                 result['wmic_output'] = wmic_output
             except Exception as e:
                 result['wmic_error'] = str(e)
-        
+
         # 获取psutil的CPU信息
         result['psutil_cpu_count_logical'] = psutil.cpu_count(logical=True)
         result['psutil_cpu_count_physical'] = psutil.cpu_count(logical=False)
-        
+
         # 常规系统信息获取结果
         result['get_system_info'] = get_system_info()
-        
+
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'调试CPU信息出错: {str(e)}'}), 500
@@ -210,7 +213,7 @@ def osquery():
         query = request.json.get('query', '')
         if not query:
             return jsonify({'error': '查询语句不能为空'}), 400
-        
+
         result = execute_osquery(query)
         return jsonify(result)
     except Exception as e:
@@ -226,16 +229,16 @@ def api_iftop():
     """获取网络连接和流量数据"""
     try:
         from utils.network_info import get_iftop_data
-        
+
         result = get_iftop_data()
-        
+
         if 'error' in result:
             return jsonify({
                 'error': result.get('error'),
                 'details': result.get('details', ''),
                 'solution': result.get('solution', '')
             }), 500
-            
+
         return jsonify(result)
     except Exception as e:
         logger.error(f"iftop API错误: {str(e)}")
@@ -262,7 +265,7 @@ def handle_connect_terminal(data):
     sid = request.sid
     try:
         logger.debug(f"收到连接请求: {sid}: {data}")
-        
+
         # 获取连接参数
         params = data.get('connect', {})
         hostname = params.get('hostname', '127.0.0.1')
@@ -275,12 +278,12 @@ def handle_connect_terminal(data):
             logger.warning(f"连接失败: 主机地址为空 - {sid}")
             emit('terminal_output', {'error': '主机地址不能为空'}, room=sid)
             return False
-            
+
         if not username:
             logger.warning(f"连接失败: 用户名为空 - {sid}")
             emit('terminal_output', {'error': '用户名不能为空'}, room=sid)
             return False
-            
+
         if not password:
             logger.warning(f"连接失败: 密码为空 - {sid}")
             emit('terminal_output', {'error': '密码不能为空'}, room=sid)
@@ -297,11 +300,11 @@ def handle_connect_terminal(data):
         # 创建新连接
         connection_result = ssh_manager.create_connection(sid, hostname, port, username, password)
         logger.debug(f"SSH连接结果: {connection_result} - {sid}")
-        
+
         if connection_result:
             logger.info(f"成功连接到 {hostname} 用户名: {username}")
             emit('terminal_output', {'data': f'\r\n[已连接到 {hostname} 用户名: {username}]\r\n'}, room=sid)
-            
+
             # 启动输出转发线程
             logger.debug(f"启动输出转发线程 - {sid}")
             threading.Thread(target=forward_output, args=(sid,), daemon=True).start()
@@ -338,7 +341,7 @@ def handle_terminal_input(data):
     try:
         msg = data.get('data', '')
         logger.debug(f"收到终端输入: {sid}, 数据长度: {len(msg)}")
-        
+
         if not ssh_manager.send_data(sid, msg):
             logger.error(f"发送数据失败: {sid}")
             emit('terminal_output', {'error': '发送数据失败'}, room=sid)
@@ -355,7 +358,7 @@ def handle_resize(data):
     try:
         cols, rows = data.get('cols', 80), data.get('rows', 24)
         logger.debug(f"调整终端大小: {sid}, {cols}x{rows}")
-        
+
         if not ssh_manager.resize_terminal(sid, cols, rows):
             emit('terminal_output', {'error': '调整终端大小失败'}, room=sid)
     except Exception as e:
@@ -376,15 +379,14 @@ if __name__ == '__main__':
     # 确保存放静态文件的目录存在
     if not os.path.exists('static'):
         os.makedirs('static')
-    
+
     # 将前端HTML文件复制到static目录（每次启动都更新）
     html_file = 'dashboard_os_info.html'
     if os.path.exists(html_file):
         import shutil
         print(f"正在更新静态文件: {html_file} -> static/{html_file}")
         shutil.copy(html_file, os.path.join('static', html_file))
-    
+
     # 使用socketio启动应用
     print("启动SSH终端服务器，访问 http://127.0.0.1:6789/terminal 使用SSH终端")
     socketio.run(app, host='127.0.0.1', port=6789, debug=True)
-

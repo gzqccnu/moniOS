@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
 
 # 检查Python版本
 python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
@@ -57,4 +59,4 @@ fi
 
 # 启动应用
 echo "启动操作系统监控面板..."
-python3 app.py 
+python3 app.py

@@ -1,3 +1,6 @@
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -9,7 +12,7 @@ def get_users_info():
     """获取系统用户账户信息"""
     try:
         users = []
-        
+
         # 遍历/etc/passwd文件获取用户信息
         for user in pwd.getpwall():
             try:
@@ -23,11 +26,11 @@ def get_users_info():
                         group_name = group.gr_name
                     except (KeyError, OverflowError):
                         group_name = str(user.pw_gid)
-                    
+
                     # 获取用户描述/注释
                     gecos = user.pw_gecos.split(',')[0] if user.pw_gecos else ''
                     description = gecos or ('超级用户' if user.pw_name == 'root' else '')
-                    
+
                     # 对一些特殊用户添加描述
                     special_descriptions = {
                         'www-data': 'Web服务器用户',
@@ -37,10 +40,10 @@ def get_users_info():
                         'redis': 'Redis服务用户',
                         'nobody': '特权最小化用户'
                     }
-                    
+
                     if not description and user.pw_name in special_descriptions:
                         description = special_descriptions[user.pw_name]
-                    
+
                     users.append({
                         'username': user.pw_name,
                         'userId': user.pw_uid,
@@ -53,14 +56,14 @@ def get_users_info():
             except (KeyError, OverflowError) as e:
                 print(f"处理用户 {user.pw_name} 时出错: {e}")
                 continue
-        
+
         # 按照用户ID排序
         users.sort(key=lambda x: x['userId'])
-        
+
         return users
     except Exception as e:
         print(f"获取用户信息时出错: {e}")
-        
+
         # 返回模拟数据
         return [
             {
@@ -81,4 +84,4 @@ def get_users_info():
                 'shell': '/bin/bash',
                 'description': '普通用户'
             }
-        ] 
+        ]

@@ -1,9 +1,14 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 .status-indicator {
     display: flex;
     align-items: center;
     margin-top: 10px;
 }
-        
+
 .status-dot {
     width: 10px;
     height: 10px;

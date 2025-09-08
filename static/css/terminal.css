@@ -1,4 +1,9 @@
-/* 加载本地字体 */
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
+/* loading font */
 @font-face {
     font-family: 'Cascadia Code';
     src: url('/fonts/Cascadia-Code-Regular-2.ttf') format('truetype');
@@ -13,7 +18,7 @@
     font-style: normal;
 }
 
-/* 终端页面布局 */
+/* terminal page layout */
 .main-content {
     display: flex;
     flex-direction: column;
@@ -36,12 +41,12 @@
     gap: 30px;
     flex-wrap: wrap;
     padding: 0;
-    scroll-margin-top: 20px; /* 添加滚动边距，使滚动到元素时有一定的上边距 */
-    margin-left: 0; /* 重置嵌套的main-content的左边距 */
-    justify-content: center; /* 居中显示 */
+    scroll-margin-top: 20px; /* add scrolling margin so that there is a certain upper margin when scrolling to the element. */
+    margin-left: 0; /* reset the left margin of the nested main content. */
+    justify-content: center; /* center display */
 }
 
-/* 页面标题样式，与其他页面保持一致 */
+/* page title style should be consistent with other pages. */
 .page-title {
     margin-top: 0;
     margin-bottom: 24px;
@@ -53,7 +58,7 @@
     width: 100%;
 }
 
-/* 连接面板样式 */
+/* connection panel style */
 .connection-panel {
     flex: 1;
     min-width: 300px;
@@ -62,12 +67,12 @@
     padding: 25px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
-    margin-bottom: 20px; /* 在小屏幕上确保与终端容器有一定距离 */
+    margin-bottom: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
 
-/* 全屏模式下的连接面板 */
+/* connection panel in fullscreen mode */
 .connection-panel.fullscreen {
     flex: 1;
     min-width: 100%;
@@ -153,7 +158,7 @@
     transform: translateY(0);
 }
 
-/* 终端容器样式 */
+/* terminal container style */
 .terminal-container {
     flex: 2;
     min-width: 500px;
@@ -164,17 +169,17 @@
     display: flex;
     flex-direction: column;
     height: 600px;
-    scroll-margin-top: 20px; /* 添加滚动边距，使滚动到元素时有一定的上边距 */
-    border: 1px solid rgba(255, 255, 255, 0.8); /* 将终端边框颜色调整为白色 */
+    scroll-margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
     transition: all 0.3s ease;
 }
 
-/* 隐藏状态 */
+/* 隐藏状态status */
 .hidden {
     display: none !important;
 }
 
-/* 全屏模式下的终端容器 */
+/* terminal container in full screen mode */
 .terminal-container.fullscreen {
     flex: 1;
     min-width: 100%;
@@ -198,7 +203,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.5); /* 调整边框颜色为白色 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .terminal-header h3 {
@@ -267,7 +272,7 @@
     margin: 0;
 }
 
-/* 覆盖 xterm.js 的默认样式 */
+/* cover xterm.js default style */
 .xterm {
     font-family: "Cascadia Code", "Consolas", monospace !important;
     font-size: 16px !important;
@@ -293,12 +298,12 @@
     height: 100% !important;
 }
 
-/* 确保终端可以接收输入 */
+/* get input */
 .xterm-cursor-layer {
     z-index: 1 !important;
 }
 
-/* 确保终端填充整个容器 */
+/* ensure that the terminal fills the entire container. */
 .terminal-container .xterm {
     width: 100% !important;
     height: 100% !important;
@@ -311,23 +316,22 @@
     justify-content: center;
 }
 
-/* 响应式设计 */
+/* responsive design */
 @media (max-width: 768px) {
     .main-content {
         margin-left: 60px;
     }
-    
+
     .main-content .main-content {
         flex-direction: column;
     }
-    
+
     .terminal-container {
         min-width: 100%;
         height: 400px;
     }
-    
-    /* 在小屏幕上增加连接面板和终端容器之间的间距 */
+
     .connection-panel {
         margin-bottom: 30px;
     }
-} 
+}

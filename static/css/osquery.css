@@ -1,5 +1,10 @@
-/* 增强osquery结果显示 */
-/* 滚动效果  */
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
+/* show osquery result */
+/* scrolling effect  */
 
 #osquery-results {
     background-color: #282c34;
@@ -17,7 +22,7 @@
     word-break: break-word;
 }
 
-/* osquery示例链接样式 */
+/* osquery linking example format*/
 #osquery-section ul li a {
     color: #3498db;
     text-decoration: none;
@@ -38,7 +43,7 @@
     margin-bottom: 8px;
 }
 
-/* 特别为OSQuery输入框添加样式 */
+/* Specially add styles to the OSQuery input box */
 #osquery-input {
     font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     background-color: #f8f9fa;

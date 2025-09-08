@@ -1,31 +1,36 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 /**
- * API客户端：与后端API通信获取系统数据
+ * API client: Communicate with backend API to get system data
  */
 
-// API基础URL
+// API base URL
 const API_BASE_URL = window.location.protocol + '//' + window.location.host;
-// 请求重试次数
+// Request retry count
 const MAX_RETRIES = 2;
-// 重试延迟（毫秒）
+// Retry delay (milliseconds)
 const RETRY_DELAY = 1000;
-// 请求缓存时间（毫秒）
+// Request cache duration (milliseconds)
 const CACHE_DURATION = 5000;
 
-// 请求缓存
+// Request cache
 const apiCache = new Map();
-// 进行中的请求
+// Pending requests
 const pendingRequests = new Map();
 
-// 带重试和缓存的fetch封装
+// fetch wrapper with retry and cache functionality
 async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
     const cacheKey = url + (options.body ? JSON.stringify(options.body) : '');
-    
-    // 检查是否有相同请求正在进行中
+
+    // Check if the same request is in progress
     if (pendingRequests.has(cacheKey)) {
         return pendingRequests.get(cacheKey);
     }
-    
-    // 检查缓存
+
+    // Check cache
     const now = Date.now();
     if (apiCache.has(cacheKey)) {
         const cachedData = apiCache.get(cacheKey);
@@ -33,136 +38,136 @@ async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
             return cachedData.data;
         }
     }
-    
-    // 创建请求promise
+
+    // Create request promise
     const fetchPromise = (async () => {
         try {
             const response = await fetch(url, options);
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`API响应错误: ${response.status} - ${errorText || response.statusText}`);
+                throw new Error(`API response error: ${response.status} - ${errorText || response.statusText}`);
             }
-            
+
             const data = await response.json();
-            
-            // 存入缓存
+
+            // Store in cache
             apiCache.set(cacheKey, {
                 data,
                 timestamp: Date.now()
             });
-            
-            // 完成后从pendingRequests中移除
+
+            // Remove from pendingRequests after completion
             pendingRequests.delete(cacheKey);
-            
+
             return data;
         } catch (error) {
             if (retries > 0) {
-                console.log(`请求失败，${RETRY_DELAY/1000}秒后重试... 剩余重试次数: ${retries}`);
+                console.log(`Request failed, retrying in ${RETRY_DELAY/1000} seconds... Remaining retries: ${retries}`);
                 await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
                 pendingRequests.delete(cacheKey);
                 return fetchWithRetry(url, options, retries - 1);
             }
-            console.error(`请求失败，无更多重试: ${error.message}`);
+            console.error(`Request failed, no more retries: ${error.message}`);
             pendingRequests.delete(cacheKey);
             throw error;
         }
     })();
-    
-    // 存储进行中的请求
+
+    // Store pending request
     pendingRequests.set(cacheKey, fetchPromise);
-    
+
     return fetchPromise;
 }
 
-// 清除缓存
+// Clear cache
 function clearCache() {
     apiCache.clear();
 }
 
-// 刷新所有数据
+// Refresh all data
 async function fetchAllData() {
     try {
-        // 清除缓存以确保获取最新数据
+        // Clear cache to ensure getting latest data
         clearCache();
         return await fetchWithRetry(`${API_BASE_URL}/api/all_data`);
     } catch (error) {
-        console.error('获取所有数据时出错:', error);
+        console.error('Error while fetching all data:', error);
         return null;
     }
 }
 
-// 获取系统信息
+// Get system information
 async function fetchSystemInfo() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/system_info`);
     } catch (error) {
-        console.error('获取系统信息时出错:', error);
+        console.error('Error while fetching system information:', error);
         return null;
     }
 }
 
-// 获取资源使用情况
+// Get resource usage
 async function fetchResourceUsage() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/resource_usage`);
     } catch (error) {
-        console.error('获取资源使用情况时出错:', error);
+        console.error('Error while fetching resource usage:', error);
         return null;
     }
 }
 
-// 获取进程信息
+// Get process information
 async function fetchProcesses() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/processes`);
     } catch (error) {
-        console.error('获取进程信息时出错:', error);
+        console.error('Error while fetching process information:', error);
         return null;
     }
 }
 
-// 获取htop数据
+// Get htop data
 async function fetchHtopData() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/htop`);
     } catch (error) {
-        console.error('获取htop数据时出错:', error);
+        console.error('Error while fetching htop data:', error);
         return null;
     }
 }
 
-// 获取网络信息
+// Get network information
 async function fetchNetworkInfo() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/network_info`);
     } catch (error) {
-        console.error('获取网络信息时出错:', error);
+        console.error('Error while fetching network information:', error);
         return null;
     }
 }
 
-// 获取网络使用情况
+// Get network usage
 async function fetchNetworkUsage() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/network_usage`);
     } catch (error) {
-        console.error('获取网络使用情况时出错:', error);
+        console.error('Error while fetching network usage:', error);
         return null;
     }
 }
 
-// 获取用户信息
+// Get user information
 async function fetchUsersInfo() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/users`);
     } catch (error) {
-        console.error('获取用户信息时出错:', error);
+        console.error('Error while fetching user information:', error);
         return null;
     }
 }
 
-// 执行osquery查询
+// Execute osquery query
 async function executeOSQuery(query) {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/osquery`, {
@@ -173,17 +178,17 @@ async function executeOSQuery(query) {
             body: JSON.stringify({ query })
         });
     } catch (error) {
-        console.error('执行osquery查询时出错:', error);
+        console.error('Error while executing osquery query:', error);
         return { error: error.message };
     }
-} 
+}
 
-// 执行 iftop
+// Execute iftop
 async function fetchIftopData() {
     try {
         return await fetchWithRetry(`${API_BASE_URL}/api/iftop`);
     } catch (error) {
-        console.error('获取 iftop 数据出错:', error);
+        console.error('Error while fetching iftop data:', error);
         return null;
     }
 }

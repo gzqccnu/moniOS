@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+-->
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -12,11 +17,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    
+
     <!-- 添加终端所需依赖 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/xterm@5.1.0/css/xterm.css">
-    
+
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/status.css">
     <link rel="stylesheet" href="/css/refresh.css">
@@ -35,14 +40,14 @@
             font-weight: normal;
             font-style: normal;
         }
-        
+
         @font-face {
             font-family: 'Cascadia Code';
             src: url("/terminal/Cascadia-Code-Regular-2.ttf") format('truetype');
             font-weight: 600;
             font-style: normal;
         }
-        
+
         body {
             font-family: 'Inter', 'Noto Sans SC', 'Segoe UI', 'Arial', sans-serif;
             margin: 0;
@@ -51,31 +56,31 @@
             color: #333;
             display: flex;
         }
-        
+
         .container {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-        } 
-        
+        }
+
         .label {
             font-weight: 500;
             color: #7f8c8d;
         }
-        
+
         .value {
             color: #2c3e50;
             font-weight: 600;
         }
-        
+
         .content-section {
             display: none;
         }
-        
+
         .content-section.active {
             display: block;
         }
-        
+
         .page-title {
             margin-top: 0;
             margin-bottom: 24px;
@@ -84,55 +89,55 @@
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-        
+
         /* 高亮网络连接特定字段 */
         .socket-event-action {
             color: #61afef;
             font-weight: 600;
         }
-        
+
         .socket-event-process {
             color: #98c379;
             font-weight: 600;
         }
-        
+
         .socket-event-address {
             color: #e06c75;
         }
-        
+
         .socket-event-time {
             color: #d19a66;
         }
-        
+
         /* 进程监控和用户账户表格 */
         #processes-table, #users-table {
             font-family: 'Inter', 'Noto Sans SC', sans-serif;
         }
-        
+
         #processes-table td, #users-table td {
             font-size: 14px;
         }
-        
+
         /* htop进程视图使用等宽字体 */
         .htop-container table {
             font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 13px;
         }
-        
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 60px;
                 padding: 20px 0;
             }
-            
+
             .sidebar-header h1, .status-text, .nav-item-text {
                 display: none;
             }
-            
+
             .main-content {
                 margin-left: 60px;
             }
-            
+
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -167,8 +172,8 @@
         }
 
         /* 确保所有文本横向显示 */
-        body, .nav-item, .card, .data-list, .performance-bar, 
-        .htop-container, .perf-table, .iftop-meta, 
+        body, .nav-item, .card, .data-list, .performance-bar,
+        .htop-container, .perf-table, .iftop-meta,
         .terminal-header, #connection-info {
             writing-mode: horizontal-tb;
             text-orientation: mixed;
@@ -187,7 +192,7 @@
                 <span class="last-update">最后更新: <span id="sidebar-last-update">--:--:--</span></span>
             </div>
             <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
-            
+
             <!-- 添加自动刷新开关 -->
             <div class="auto-refresh-container">
                 <span class="auto-refresh-label">自动刷新</span>
@@ -200,7 +205,7 @@
                 下次刷新: <span id="refresh-countdown">--</span>
             </div>
         </div>
-        
+
         <ul class="nav-menu">
             <li class="nav-item active" onclick="openSection('dashboard-section')">
                 <span class="nav-item-text">仪表盘概览</span>
@@ -225,8 +230,8 @@
             </li>
         </ul>
     </div>
-  
-    
+
+
     <div class="main-content">
         <div class="container">
             <!-- 仪表盘概览 -->
@@ -246,7 +251,7 @@
                             <li><span class="label">系统运行时间:</span> <span class="value" id="uptime">加载中...</span></li>
                         </ul>
                     </div>
-                    
+
                     <div class="card">
                         <h2>资源使用</h2>
                         <div>
@@ -255,13 +260,13 @@
                                 <div class="performance-fill" id="cpu-usage-bar" style="width: 0%;"></div>
                                 <div class="performance-text" id="cpu-usage-text">0%</div>
                             </div>
-                            
+
                             <h3>内存使用率</h3>
                             <div class="performance-bar">
                                 <div class="performance-fill" id="memory-usage-bar" style="width: 0%;"></div>
                                 <div class="performance-text" id="memory-usage-text">0%</div>
                             </div>
-                            
+
                             <h3>磁盘使用率</h3>
                             <div class="performance-bar">
                                 <div class="performance-fill" id="disk-usage-bar" style="width: 0%;"></div>
@@ -275,7 +280,7 @@
                             <li><span class="label">可用磁盘空间:</span> <span class="value" id="free-disk">加载中...</span></li>
                         </ul>
                     </div>
-                    
+
                     <div class="card">
                         <h2>网络信息</h2>
                         <ul class="data-list" id="network-info">
@@ -322,7 +327,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <!-- htop视图 -->
             <div class="content-section" id="htop-section">
                 <h1 class="page-title">进程视图</h1>
@@ -335,28 +340,28 @@
                             <span style="margin-left: 20px;">负载平均值: <span id="htop-load-avg">0.00 0.00 0.00</span></span>
                             <span style="margin-left: 20px;">运行时间: <span id="htop-uptime">0天 00:00:00</span></span>
                         </div>
-                        
+
                         <div>
                             <div>CPU[<span style="color:#3498db;">用户</span>:<span id="htop-cpu-user">0.0%</span> <span style="color:#2ecc71;">系统</span>:<span id="htop-cpu-system">0.0%</span> <span style="color:#e74c3c;">中断</span>:<span id="htop-cpu-irq">0.0%</span> <span style="color:#f1c40f;">空闲</span>:<span id="htop-cpu-idle">0.0%</span>]</div>
                             <div class="cpu-bars" id="htop-cpu-bars">
                                 <!-- CPU bars will be dynamically generated -->
                             </div>
                         </div>
-                        
+
                         <div>
                             <div>内存[<span style="color:#3498db;">已用</span>:<span id="htop-mem-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-mem-free">0K</span> <span style="color:#e74c3c;">缓冲区</span>:<span id="htop-mem-buff">0K</span>]</div>
                             <div class="memory-bar">
                                 <div class="memory-fill" id="htop-memory-fill" style="width: 0%;"></div>
                             </div>
                         </div>
-                        
+
                         <div>
                             <div>交换空间[<span style="color:#3498db;">已用</span>:<span id="htop-swap-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-swap-free">0K</span>]</div>
                             <div class="memory-bar">
                                 <div class="memory-fill" id="htop-swap-fill" style="width: 0%;"></div>
                             </div>
                         </div>
-                        
+
                         <table class="perf-table" style="margin-top: 15px;">
                             <thead>
                                 <tr>
@@ -381,7 +386,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 账户视图 -->
             <div class="content-section" id="users-section">
                 <h1 class="page-title">账户视图</h1>
@@ -405,7 +410,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <!-- 系统信息查询 -->
             <div class="content-section" id="osquery-section">
                 <h1 class="page-title">操作系统信息查询</h1>
@@ -499,7 +504,7 @@
                             </button>
                         </form>
                     </div>
-                    
+
                     <!-- 终端容器 -->
                     <div class="terminal-container hidden fullscreen" id="terminal-container">
                         <div class="terminal-header">
@@ -523,7 +528,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
     <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>

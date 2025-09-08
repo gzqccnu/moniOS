@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 .refresh-btn {
     background-color: #3498db;
     color: white;
@@ -22,7 +27,7 @@
     transform: translateY(0);
 }
 
-/* 自动刷新开关样式 */
+/* auto refresh button style */
 .auto-refresh-container {
     display: flex;
     align-items: center;
@@ -47,7 +52,7 @@
     padding: 3px 6px;
     border-radius: 4px;
 }
-/* 开关按钮样式 */
+/* switch button style */
 .toggle-switch {
     position: relative;
     display: inline-block;
@@ -93,7 +98,7 @@ input:checked + .toggle-slider:before {
     transform: translateX(20px);
 }
 
-/* 倒计时样式 */
+/* countdown style */
 .countdown-container {
     margin-top: 8px;
     font-size: 12px;

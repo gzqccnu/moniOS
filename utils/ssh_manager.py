@@ -1,3 +1,6 @@
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
+
 import paramiko
 import threading
 import time
@@ -11,24 +14,24 @@ class SSHManager:
     def __init__(self):
         self.clients = {}
         self.lock = threading.Lock()
-        
+
         # SSH配置
         self.SSH_TIMEOUT = 30
         self.SSH_BANNER_TIMEOUT = 30
         self.SSH_AUTH_TIMEOUT = 30
-        
+
         # 心跳检测配置
         self.HEARTBEAT_TIMEOUT = 60   # 秒
-    
+
     def create_connection(self, sid, hostname, port, username, password):
         """创建新的SSH连接"""
         try:
             logger.debug(f"creating ssh connection: {sid} -> {hostname}:{port}")
-            
+
             # 创建SSH客户端
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            
+
             # 连接服务器
             logger.debug(f"trying to connect to server: {hostname}:{port}")
             ssh.connect(
@@ -42,13 +45,13 @@ class SSHManager:
                 allow_agent=False,
                 look_for_keys=False
             )
-            
+
             # 创建交互式shell，确保使用支持UTF-8的终端类型
             logger.debug(f"creating interactive shell: {sid}")
             # 使用xterm-256color，确保支持UTF-8
             channel = ssh.invoke_shell(term='xterm-256color', width=80, height=24)
             channel.settimeout(0.0)
-            
+
             # 设置环境变量以支持UTF-8
             transport = channel.get_transport()
             if transport:
@@ -61,7 +64,7 @@ class SSHManager:
                     logger.debug(f"UTF-8 environment variables set for {sid}")
                 except Exception as e:
                     logger.warning(f"Failed to set UTF-8 environment variables: {str(e)}")
-            
+
             # 存储连接信息
             with self.lock:
                 self.clients[sid] = {
@@ -70,10 +73,10 @@ class SSHManager:
                     'last_activity': time.time(),
                     'running': True
                 }
-            
+
             logger.info(f"SSH connecting successed: {sid} -> {hostname}:{port}")
             return True
-            
+
         except paramiko.AuthenticationException as e:
             logger.error(f"SSH authentication failed: {sid} -> {hostname}:{port} - {str(e)}")
             return False
@@ -83,7 +86,7 @@ class SSHManager:
         except Exception as e:
             logger.error(f"error when creating SSH connection: {sid} -> {hostname}:{port} - {str(e)}")
             return False
-    
+
     def close_connection(self, sid):
         """关闭SSH连接"""
         with self.lock:
@@ -103,7 +106,7 @@ class SSHManager:
                     logger.debug(f"removed from client list: {sid}")
             else:
                 logger.debug(f"trying to clsoe non-existent connection: {sid}")
-    
+
     def send_data(self, sid, data):
         """发送数据到SSH通道"""
         with self.lock:
@@ -123,7 +126,7 @@ class SSHManager:
                         logger.error(f"error when encoding data: {sid} - {str(e)}")
                         # 如果出错，尝试不同的编码方式
                         client['channel'].send(data.encode('utf-8', errors='ignore'))
-                    
+
                     client['last_activity'] = time.time()
                     return True
                 except Exception as e:
@@ -132,7 +135,7 @@ class SSHManager:
             else:
                 logger.warning(f"trying to sending data to non-existent connection: {sid}")
         return False
-    
+
     def get_output(self, sid):
         """获取SSH通道的输出"""
         with self.lock:
@@ -150,7 +153,7 @@ class SSHManager:
             elif client is None:
                 logger.debug(f"trying to get non-existent connection's print: {sid}")
         return None
-    
+
     def check_connection(self, sid):
         """检查连接是否活跃"""
         with self.lock:
@@ -164,7 +167,7 @@ class SSHManager:
             else:
                 logger.debug(f"checking non-existent connection: {sid}")
         return False
-    
+
     def resize_terminal(self, sid, cols, rows):
         """调整终端大小"""
         with self.lock:
@@ -178,4 +181,4 @@ class SSHManager:
                     logger.error(f"error when adjusting terminal's size: {sid} - {str(e)}")
             else:
                 logger.warning(f"trying to get non-existent connection's terminal's size: {sid}")
-        return False 
+        return False

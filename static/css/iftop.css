@@ -1,4 +1,9 @@
-/* 网络流量监控 */
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
+/* net stream monitor */
 #iftop-section .card {
     background-color: #fff;
     border: 1px solid #e0e0e0;
@@ -9,7 +14,7 @@
     font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* 标题 */
+/* title */
 #iftop-section .page-title {
     font-size: 1.6rem;
     font-weight: 600;
@@ -17,7 +22,7 @@
     margin-bottom: 1rem;
 }
 
-/* 信息头部 */
+/* information header */
 .iftop-meta {
     display: flex;
     flex-wrap: wrap;
@@ -31,14 +36,14 @@
     color: #222;
 }
 
-/* 无数据提示 */
+/* no data notation */
 .no-data {
     text-align: center;
     color: #999;
     font-style: italic;
 }
 
-/* 图表容器留白 */
+/* chart container leave blank*/
 .traffic-chart {
     margin-bottom: 1.5rem;
 }

@@ -1,3 +1,6 @@
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -15,10 +18,10 @@ osquery_available = None
 def is_osquery_available():
     """检查osquery是否可用"""
     global osquery_available
-    
+
     if osquery_available is None:
         osquery_available = which('osqueryi') is not None
-    
+
     return osquery_available
 
 def sanitize_query(query):
@@ -26,7 +29,7 @@ def sanitize_query(query):
     # 检查查询是否以点命令或SELECT开头
     if not re.match(r'^\s*(?:\.|SELECT)', query, re.IGNORECASE):
         raise ValueError("只允许执行点命令或SELECT查询")
-    
+
     # 检查是否有多条SQL语句（由分号分隔）
     statements = [s.strip() for s in query.split(';') if s.strip()]
     if len(statements) > 1:
@@ -44,7 +47,7 @@ def sanitize_query(query):
     elif not query.endswith(';'):
         # SELECT语句需要分号
         query += ';'
-    
+
     # 检查是否包含危险关键词（仅对SELECT语句）
     if query.strip().upper().startswith('SELECT'):
         dangerous_keywords = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE']
@@ -52,42 +55,42 @@ def sanitize_query(query):
             pattern = r'\b' + keyword + r'\b'
             if re.search(pattern, query, re.IGNORECASE):
                 raise ValueError(f"查询包含不允许的关键词: {keyword}")
-    
+
     return query
 
 def execute_osquery(query):
     if not is_osquery_available():
         return handle_osquery_unavailable(query)
-    
+
     try:
         # 净化查询
         safe_query = sanitize_query(query)
-        
+
         # 执行osquery命令
         cmd = ['osqueryi', '--json', safe_query] if safe_query.strip().lower().startswith('select') \
               else ['osqueryi', safe_query]
-        
+
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate(timeout=30)
-        
+
         if process.returncode != 0:
             error_msg = stderr.decode('utf-8', errors='ignore')
             print(f"osquery执行失败: {error_msg}")
             return {'error': f"查询执行失败: {error_msg}"}
-        
+
         output = stdout.decode('utf-8', errors='ignore')
-        
+
         # 点命令返回文本结果
         if safe_query.startswith('.'):
             return {'text': output}
-        
+
         try:
             # 尝试解析JSON输出
             return json.loads(output)
         except json.JSONDecodeError:
             # 如果不是JSON格式，返回原始文本
             return [{'result': output}]
-        
+
     except ValueError as e:
         return {'error': str(e)}
     except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
@@ -189,4 +192,4 @@ def mock_services():
 def handle_osquery_unavailable(query):
     """处理osquery不可用的情况"""
     print("osquery工具不可用，使用模拟数据")
-    return mock_osquery_result(query) 
+    return mock_osquery_result(query)

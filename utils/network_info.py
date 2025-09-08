@@ -1,3 +1,6 @@
+# Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+# https://github.com/gzqccnu/moniOS
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -27,13 +30,13 @@ def get_primary_interface():
         if 'default' in gws and netifaces.AF_INET in gws['default']:
             interface = gws['default'][netifaces.AF_INET][1]
             return interface
-        
+
         # 如果上面的方法失败，尝试获取第一个非回环地址的接口
         for interface in netifaces.interfaces():
             addresses = netifaces.ifaddresses(interface)
             if netifaces.AF_INET in addresses and not addresses[netifaces.AF_INET][0]['addr'].startswith('127.'):
                 return interface
-        
+
         # 如果还是失败，返回第一个接口
         interfaces = netifaces.interfaces()
         if interfaces:
@@ -49,18 +52,18 @@ def get_network_info():
         interface = get_primary_interface()
         if not interface:
             raise Exception("未找到有效的网络接口")
-        
+
         # 获取接口地址信息
         addresses = netifaces.ifaddresses(interface)
-        
+
         # 获取IPv4地址
         ipv4_info = addresses.get(netifaces.AF_INET, [{}])[0]
         primary_ip = ipv4_info.get('addr', '未知')
-        
+
         # 获取MAC地址
         mac_info = addresses.get(netifaces.AF_LINK, [{}])[0]
         mac_address = mac_info.get('addr', '未知')
-        
+
         # 获取DNS服务器
         dns_servers = []
         if os.path.exists('/etc/resolv.conf'):
@@ -68,7 +71,7 @@ def get_network_info():
                 for line in f:
                     if line.startswith('nameserver'):
                         dns_servers.append(line.split()[1])
-        
+
         # 如果无法从文件获取DNS，尝试从netifaces获取
         if not dns_servers:
             try:
@@ -76,13 +79,13 @@ def get_network_info():
                 dns_servers = dns.resolver.Resolver().nameservers
             except:
                 pass
-        
+
         # 获取网关
         gateway = '未知'
         gws = netifaces.gateways()
         if 'default' in gws and netifaces.AF_INET in gws['default']:
             gateway = gws['default'][netifaces.AF_INET][0]
-        
+
         return {
             'primaryIp': primary_ip,
             'macAddress': mac_address,
@@ -101,16 +104,16 @@ def get_network_info():
 def update_network_history():
     """更新网络历史数据"""
     global last_net_io, last_net_time, network_history
-    
+
     try:
         current_time = time.time()
         current_net_io = psutil.net_io_counters()
-        
+
         # 首次运行时初始化
         if last_net_io is None or last_net_time is None:
             last_net_io = current_net_io
             last_net_time = current_time
-            
+
             # 如果持久化的历史数据存在，尝试加载
             if os.path.exists('network_history.json'):
                 try:
@@ -119,7 +122,7 @@ def update_network_history():
                         network_history = deque(saved_history, maxlen=13)
                 except Exception as e:
                     print(f"加载网络历史数据失败: {e}")
-            
+
             # 没有历史数据时生成模拟数据
             if not network_history:
                 for i in range(13):
@@ -129,34 +132,34 @@ def update_network_history():
                         'rx': 0,
                         'tx': 0
                     })
-            
+
             return
-        
+
         # 计算时间差(秒)
         time_diff = current_time - last_net_time
-        
+
         if time_diff > 0:
             # 计算速率(MB/s)
             rx_speed = (current_net_io.bytes_recv - last_net_io.bytes_recv) / time_diff / (1024 * 1024)
             tx_speed = (current_net_io.bytes_sent - last_net_io.bytes_sent) / time_diff / (1024 * 1024)
-            
+
             # 每小时记录一次数据
             current_hour = datetime.datetime.now().hour
             current_minute = datetime.datetime.now().minute
-            
+
             # 创建新的数据点
             new_data_point = {
                 'time': f"{current_hour:02d}:00",
                 'rx': round(rx_speed, 2),
                 'tx': round(tx_speed, 2)
             }
-            
+
             # 检查最新的数据点是否是当前小时
             if network_history:
                 latest_hour = int(network_history[-1]['time'].split(':')[0])
                 if latest_hour != current_hour:
                     network_history.append(new_data_point)
-                    
+
                     # 保存历史数据到文件
                     try:
                         with open('network_history.json', 'w') as f:
@@ -165,7 +168,7 @@ def update_network_history():
                         print(f"保存网络历史数据失败: {e}")
             else:
                 network_history.append(new_data_point)
-            
+
             # 更新上次测量数据
             last_net_io = current_net_io
             last_net_time = current_time
@@ -177,12 +180,12 @@ def get_network_usage():
     try:
         # 更新网络历史数据
         update_network_history()
-        
+
         # 返回历史数据
         return list(network_history)
     except Exception as e:
         print(f"获取网络使用情况时出错: {e}")
-        
+
         # 返回模拟数据
         return [
             {'time': '00:00', 'rx': 0, 'tx': 0},

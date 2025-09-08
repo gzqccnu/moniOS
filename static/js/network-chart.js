@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 // 网络图表配置
 let networkChart;
 const networkChartConfig = {

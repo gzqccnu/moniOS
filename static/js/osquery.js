@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 // 设置OSquery示例
 function setOSQueryExample(query) {
     document.getElementById('osquery-input').value = query;
@@ -8,28 +13,28 @@ let osqueryTimeout = null;
 async function runOSQuery() {
     const query = document.getElementById('osquery-input').value.trim();
     const results = document.getElementById('osquery-results');
-    
+
     if (!query) {
         results.textContent = '请输入查询语句';
         return;
     }
-    
+
     // 处理特殊命令：.tables - 列出所有可用表
     if (query === '.tables') {
         displayTablesList(results);
         return;
     }
-    
+
     // 显示正在执行
     results.textContent = '正在执行查询...';
-    
+
     // 使用防抖避免频繁请求
     clearTimeout(osqueryTimeout);
     osqueryTimeout = setTimeout(async () => {
         try {
             // 调用API执行查询
             const data = await executeOSQuery(query);
-            
+
             if (data.error) {
                 results.textContent = `查询执行失败: ${data.error}`;
             } else {
@@ -84,7 +89,7 @@ async function displayTablesList(container) {
       .map(l => l.trim())
       .filter(l => l.startsWith('=>'))
       .map(l => l.replace(/^=>\s*/, '').trim());
-    
+
     if (!tables.length) {
       throw new Error('返回结果中未找到任何表名');
     }
@@ -102,7 +107,7 @@ async function displayTablesList(container) {
     'font-size:13px',
     'line-height:1.6',
   ].join(';');
-  
+
   tables.forEach(table => {
     const item = document.createElement('div');
     item.textContent = `=> ${table}`;
@@ -120,12 +125,12 @@ async function displayTablesList(container) {
 function formatSocketEventsResults(container, data) {
     // 清空容器
     container.innerHTML = '';
-    
+
     if (!data || !Array.isArray(data) || data.length === 0) {
         container.textContent = '未找到socket事件数据';
         return;
     }
-    
+
     // 创建结果表格
     const table = document.createElement('table');
     table.style.width = '100%';
@@ -133,14 +138,14 @@ function formatSocketEventsResults(container, data) {
     table.style.marginTop = '10px';
     table.style.color = '#abb2bf';
     table.style.fontSize = '13px';
-    
+
     // 创建表头
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    
+
     // 获取所有列名
     const columns = Object.keys(data[0]);
-    
+
     columns.forEach(column => {
         const th = document.createElement('th');
         th.textContent = column;
@@ -150,21 +155,21 @@ function formatSocketEventsResults(container, data) {
         th.style.color = '#61afef';
         headerRow.appendChild(th);
     });
-    
+
     thead.appendChild(headerRow);
     table.appendChild(thead);
-    
+
     // 创建表体
     const tbody = document.createElement('tbody');
-    
+
     data.forEach(row => {
         const tr = document.createElement('tr');
-        
+
         columns.forEach(column => {
             const td = document.createElement('td');
             td.style.padding = '8px';
             td.style.borderBottom = '1px solid #333';
-            
+
             // 为特定列添加样式
             if (column === 'action') {
                 td.className = 'socket-event-action';
@@ -175,14 +180,14 @@ function formatSocketEventsResults(container, data) {
             } else if (column === 'time') {
                 td.className = 'socket-event-time';
             }
-            
+
             td.textContent = row[column] || 'N/A';
             tr.appendChild(td);
         });
-        
+
         tbody.appendChild(tr);
     });
-    
+
     table.appendChild(tbody);
     container.appendChild(table);
 }

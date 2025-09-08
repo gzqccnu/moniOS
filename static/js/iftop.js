@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 const trafficCtx = document.getElementById('trafficChart').getContext('2d');
 const trafficChart = new Chart(trafficCtx, {
     type: 'line',
@@ -77,7 +82,7 @@ async function updateIftopData() {
         if (totalTxElement) totalTxElement.textContent = `${data.total_tx || 0} MB`;
 
 
-        // Update chart (确保trafficChart已定义)
+        // Update chart
         if (typeof trafficChart !== 'undefined') {
             const now = new Date();
             const timeLabel = String(now.getHours()).padStart(2, '0') + ':' +
@@ -98,7 +103,7 @@ async function updateIftopData() {
             trafficChart.data.labels.push(timeLabel); // Pushing time label
             trafficChart.data.datasets[0].data.push(data.total_rx || 0);
             trafficChart.data.datasets[1].data.push(data.total_tx || 0);
-            trafficChart.update('none'); // 使用'none'模式提高性能
+            trafficChart.update('none');
         }
 
         // Update connections table

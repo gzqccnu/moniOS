@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+-->
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -14,12 +19,12 @@
     <link rel="stylesheet" href="/css/refresh.css">
     <link rel="stylesheet" href="/css/nav.css">
     <link rel="stylesheet" href="/css/main.css">
-    
+
     <!-- 添加Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+
     <style>
         /* 确保侧边栏状态指示器样式与其他页面一致 */
         .sidebar .status-indicator {
@@ -28,7 +33,7 @@
             align-items: center ;
             margin-top: 10px;
         }
-        
+
         .sidebar .status-dot {
             width: 10px;
             height: 10px;
@@ -38,7 +43,7 @@
             box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
             display: inline-block !important;
         }
-        
+
         .sidebar .status-text {
             font-size: 12px;
             font-weight: 500;
@@ -55,7 +60,7 @@
                 <span class="status-text">已连接</span>
             </div>
             <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
-            
+
             <!-- 添加自动刷新开关 -->
             <div class="auto-refresh-container">
                 <span class="auto-refresh-label">自动刷新</span>
@@ -68,7 +73,7 @@
                 下次刷新: <span id="refresh-countdown">--</span>
             </div>
         </div>
-        
+
         <ul class="nav-menu">
             <li class="nav-item" onclick="window.location.href='/'">
                 <span class="nav-item-text">仪表盘概览</span>
@@ -125,7 +130,7 @@
                         </button>
                     </form>
                 </div>
-                
+
                 <!-- 终端容器 -->
                 <div class="terminal-container hidden fullscreen" id="terminal-container">
                     <div class="terminal-header">
@@ -155,4 +160,4 @@
     <script src="/js/terminal.js"></script>
     <script src="/js/sidebar.js"></script>
 </body>
-</html> 
+</html>

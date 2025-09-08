@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
+https://github.com/gzqccnu/moniOS
+*/
+
 // 启用严格模式提高性能
 'use strict';
 
@@ -115,7 +120,7 @@ function initResourceUsage() {
     updatePerformanceBar('cpu-usage', mockData.resourceUsage.cpuUsage);
     updatePerformanceBar('memory-usage', mockData.resourceUsage.memoryUsage);
     updatePerformanceBar('disk-usage', mockData.resourceUsage.diskUsage);
-    
+
     // 更新内存和磁盘数据
     document.getElementById('total-memory').textContent = mockData.resourceUsage.totalMemory;
     document.getElementById('free-memory').textContent = mockData.resourceUsage.freeMemory;
@@ -127,12 +132,12 @@ function initResourceUsage() {
 function updatePerformanceBar(id, value) {
     const bar = document.getElementById(`${id}-bar`);
     const text = document.getElementById(`${id}-text`);
-    
+
     // 验证数据是否为有效数值
     value = parseFloat(value);
     if (isNaN(value) || value < 0) value = 0;
     if (value > 100) value = 100;
-    
+
     // 根据使用率设置颜色
     let barColor;
     if (value >= 90) {
@@ -142,7 +147,7 @@ function updatePerformanceBar(id, value) {
     } else {
         barColor = '#3498db'; // 正常蓝色
     }
-    
+
     // 只有当值发生变化时才更新DOM
     if (bar.style.width !== `${value}%`) {
         bar.style.width = `${value}%`;
@@ -164,7 +169,7 @@ function initProcesses() {
     const tbody = document.getElementById('processes-body');
     // 使用DocumentFragment减少DOM重绘
     const fragment = document.createDocumentFragment();
-    
+
     mockData.processes.forEach(process => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -178,7 +183,7 @@ function initProcesses() {
         `;
         fragment.appendChild(tr);
     });
-    
+
     // 清空并一次性添加所有行
     tbody.innerHTML = '';
     tbody.appendChild(fragment);
@@ -188,7 +193,7 @@ function initProcesses() {
 function initUsers() {
     const tbody = document.getElementById('users-table');
     const fragment = document.createDocumentFragment();
-    
+
     mockData.users.forEach(user => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -201,7 +206,7 @@ function initUsers() {
         `;
         fragment.appendChild(tr);
     });
-    
+
     tbody.innerHTML = '';
     tbody.appendChild(fragment);
 }
@@ -225,7 +230,7 @@ function initHtop() {
         'htop-swap-used': mockData.htopData.swapUsed,
         'htop-swap-free': mockData.htopData.swapFree
     };
-    
+
     // 批量更新文本内容
     for (const [id, value] of Object.entries(headerData)) {
         const element = document.getElementById(id);
@@ -233,7 +238,7 @@ function initHtop() {
             element.textContent = value;
         }
     }
-    
+
     // 添加高亮标签
     const htopHeader = document.querySelector('.htop-header');
     htopHeader.innerHTML = `
@@ -243,19 +248,19 @@ function initHtop() {
         <span class="highlight">负载平均值: <span id="htop-load-avg">${mockData.htopData.loadAvg}</span></span>
         <span>运行时间: <span id="htop-uptime">${mockData.systemInfo.uptime}</span></span>
     `;
-    
+
     // 更新内存和交换空间使用率
-    const memoryUsage = (parseFloat(mockData.htopData.memUsed) / 
+    const memoryUsage = (parseFloat(mockData.htopData.memUsed) /
                         (parseFloat(mockData.htopData.memUsed) + parseFloat(mockData.htopData.memFree))) * 100;
     document.getElementById('htop-memory-fill').style.width = `${isNaN(memoryUsage) ? 0 : memoryUsage}%`;
-    
+
     const swapTotal = parseFloat(mockData.htopData.swapUsed) + parseFloat(mockData.htopData.swapFree);
     const swapUsage = swapTotal > 0 ? (parseFloat(mockData.htopData.swapUsed) / swapTotal) * 100 : 0;
     document.getElementById('htop-swap-fill').style.width = `${swapUsage}%`;
-    
+
     // 优化CPU条渲染
     generateCpuBars();
-    
+
     // 使用DocumentFragment优化进程表渲染
     generateHtopProcessTable();
 }
@@ -264,26 +269,26 @@ function initHtop() {
 function generateCpuBars() {
     const cpuBarsContainer = document.getElementById('htop-cpu-bars');
     const fragment = document.createDocumentFragment();
-    
+
     // 仅在CPU条数量变化时重新创建
     if (cpuBarsContainer.children.length !== mockData.htopData.cpuCores) {
         cpuBarsContainer.innerHTML = '';
-        
+
         for (let i = 0; i < mockData.htopData.cpuCores; i++) {
             const cpuBar = document.createElement('div');
             cpuBar.className = 'cpu-bar';
-            
+
             const cpuFill = document.createElement('div');
             cpuFill.className = 'cpu-fill';
             cpuFill.id = `cpu-fill-${i}`;
-            
+
             cpuBar.appendChild(cpuFill);
             fragment.appendChild(cpuBar);
         }
-        
+
         cpuBarsContainer.appendChild(fragment);
     }
-    
+
     // 更新CPU使用率
     for (let i = 0; i < mockData.htopData.cpuCores; i++) {
         const usagePercent = mockData.htopData.cpuUsage[i] || 0;
@@ -298,17 +303,17 @@ function generateCpuBars() {
 function generateHtopProcessTable() {
     const htopProcesses = document.getElementById('htop-processes');
     const fragment = document.createDocumentFragment();
-    
+
     htopProcesses.innerHTML = '';
-    
+
     mockData.htopData.processes.forEach(process => {
         const tr = document.createElement('tr');
-        
+
         // 获取CSS类
         const cpuClass = getUsageClass(process.cpu);
         const memClass = getUsageClass(process.mem);
         const stateClass = getStateClass(process.state);
-        
+
         tr.innerHTML = `
             <td>${process.pid}</td>
             <td>${process.user}</td>
@@ -325,7 +330,7 @@ function generateHtopProcessTable() {
         `;
         fragment.appendChild(tr);
     });
-    
+
     htopProcesses.appendChild(fragment);
 }
 
@@ -527,23 +532,23 @@ setInterval(updateIftopData, 5000);
 function openSection(sectionId) {
     // 如果已经是当前活动的部分，则不重复处理
     if (appState.activeSection === sectionId) return;
-    
+
     // 保存当前活动的部分
     appState.activeSection = sectionId;
-    
+
     // 隐藏所有内容区域
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
     });
-    
+
     // 显示选中的内容区域
     document.getElementById(sectionId).classList.add('active');
-    
+
     // 更新导航菜单激活状态
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
-    
+
     // 找到触发该操作的导航项并激活它
     const navItems = document.querySelectorAll('.nav-item');
     for (let i = 0; i < navItems.length; i++) {
@@ -552,7 +557,7 @@ function openSection(sectionId) {
             break;
         }
     }
-    
+
 }
 
 // 进程搜索功能
@@ -560,14 +565,14 @@ function searchProcesses() {
     const searchTerm = document.getElementById('process-search').value.toLowerCase();
     const tbody = document.getElementById('processes-body');
     const fragment = document.createDocumentFragment();
-    
-    const filteredProcesses = mockData.processes.filter(process => 
-        process.name.toLowerCase().includes(searchTerm) || 
+
+    const filteredProcesses = mockData.processes.filter(process =>
+        process.name.toLowerCase().includes(searchTerm) ||
         process.pid.toString().includes(searchTerm)
     );
-    
+
     tbody.innerHTML = '';
-    
+
     if (filteredProcesses.length === 0) {
         const tr = document.createElement('tr');
         tr.innerHTML = '<td colspan="7" style="text-align: center;">没有找到匹配的进程</td>';
@@ -587,7 +592,7 @@ function searchProcesses() {
             fragment.appendChild(tr);
         });
     }
-    
+
     tbody.appendChild(fragment);
 }
 
@@ -701,20 +706,20 @@ const refreshData = throttle(async function() {
 // 智能UI更新：只更新当前活动Section
 function updateActiveSection() {
     const activeSection = appState.activeSection;
-    
+
     // 通用数据：始终更新系统基本信息
     initSystemInfo();
-    
+
     // 更新lastUpdateTime
     appState.lastUpdateTime = Date.now();
-    
+
     // 增加更新时间显示
     if (document.getElementById('last-update-time')) {
         const date = new Date(appState.lastUpdateTime);
-        document.getElementById('last-update-time').textContent = 
+        document.getElementById('last-update-time').textContent =
             `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
     }
-    
+
     // 根据当前活动页面选择性更新
     switch (activeSection) {
         case 'dashboard-section':
@@ -765,7 +770,7 @@ window.onload = function() {
     timeIndicator.style.fontSize = '12px';
     timeIndicator.innerHTML = '最后更新: <span id="last-update-time">--:--:--</span>';
     statusIndicator.appendChild(timeIndicator);
-    
+
     // 初始化UI
     initSystemInfo();
     initResourceUsage();
@@ -776,7 +781,7 @@ window.onload = function() {
     initHtop();
     initPerfTop();
     initIftop();
-    
+
     // 添加键盘快捷键支持
     document.addEventListener('keydown', function(e) {
         // 按F5刷新数据
@@ -785,18 +790,18 @@ window.onload = function() {
             refreshData();
         }
     });
-    
+
     // 添加页面可见性监听
     document.addEventListener('visibilitychange', function() {
         autoRefresh.handleVisibilityChange();
     });
-    
+
     // 定期更新状态点闪烁以表示系统在线
     setInterval(() => {
         const statusDot = document.querySelector('.status-dot');
         statusDot.style.opacity = statusDot.style.opacity === '0.5' ? '1' : '0.5';
     }, 1000);
-    
+
     // 加载自动刷新设置
     autoRefresh.loadSettings();
 };
@@ -811,26 +816,26 @@ let remainingTime = AUTO_REFRESH_INTERVAL / 1000;
 function toggleAutoRefresh() {
     const autoRefreshToggle = document.getElementById('auto-refresh-toggle');
     const countdownElement = document.getElementById('refresh-countdown');
-    
+
     // 保存用户偏好
     localStorage.setItem('autoRefreshEnabled', autoRefreshToggle.checked);
-    
+
     if (autoRefreshToggle.checked) {
         // 启用自动刷新
         remainingTime = AUTO_REFRESH_INTERVAL / 1000;
         countdownElement.textContent = remainingTime + '秒';
-        
+
         // 创建自动刷新计时器
         autoRefreshInterval = setInterval(() => {
             refreshData();
             remainingTime = AUTO_REFRESH_INTERVAL / 1000;
         }, AUTO_REFRESH_INTERVAL);
-        
+
         // 创建倒计时更新计时器
         countdownInterval = setInterval(() => {
             remainingTime--;
             countdownElement.textContent = remainingTime + '秒';
-            
+
             // 更新倒计时颜色
             if (remainingTime <= 2) {
                 countdownElement.style.color = '#e74c3c';
@@ -840,7 +845,7 @@ function toggleAutoRefresh() {
                 countdownElement.style.color = '#3498db';
             }
         }, 1000);
-        
+
         // 立即刷新一次
         refreshData();
     } else {
@@ -855,9 +860,9 @@ function toggleAutoRefresh() {
 // 自动刷新
 async function smartRefresh() {
     if (appState.isRefreshing) return;
-    
+
     appState.isRefreshing = true;
-    
+
     // 为刷新按钮添加视觉反馈
     const refreshBtn = document.querySelector('.refresh-btn');
     const originalText = refreshBtn.textContent;
@@ -991,7 +996,7 @@ function updateLastUpdateTime() {
 // 初始化网络图表
 function initNetworkChart() {
     const ctx = document.getElementById('network-chart').getContext('2d');
-    
+
     // 准备图表数据
     const chartData = {
         labels: mockData.networkUsage.map(item => item.time),
@@ -1014,7 +1019,7 @@ function initNetworkChart() {
             }
         ]
     };
-    
+
     // 使用预设配置创建图表
     networkChartConfig.data = chartData;
     networkChart = new Chart(ctx, networkChartConfig);
@@ -1042,15 +1047,15 @@ const autoRefresh = {
     remainingTime: 5000,
     maxRetryCount: 3, // 最大重试次数
     retryCount: 0, // 当前重试次数
-    
+
     // 启动自动刷新
     start() {
         this.stop(); // 确保先停止之前的计时器
-        
+
         // 设置初始倒计时
         this.remainingTime = Math.floor(this.interval / 1000);
         this.updateCountdown();
-        
+
         // 创建刷新计时器
         this.timerId = setInterval(() => {
             // 仅在页面可见时刷新
@@ -1058,7 +1063,7 @@ const autoRefresh = {
                 this.performRefresh();
             }
         }, this.interval);
-        
+
         // 创建倒计时更新计时器
         this.countdownId = setInterval(() => {
             if (this.pageVisible) {
@@ -1069,33 +1074,33 @@ const autoRefresh = {
                 this.updateCountdown();
             }
         }, 1000);
-        
+
         // 立即执行一次刷新
         this.performRefresh();
-        
+
         // 保存设置
         this.saveSettings();
     },
-    
+
     // 停止自动刷新
     stop() {
         if (this.timerId) {
             clearInterval(this.timerId);
             this.timerId = null;
         }
-        
+
         if (this.countdownId) {
             clearInterval(this.countdownId);
             this.countdownId = null;
         }
-        
+
         // 重置倒计时显示
         document.getElementById('refresh-countdown').textContent = '--';
-        
+
         // 保存设置
         this.saveSettings();
     },
-    
+
     // 执行刷新操作
     performRefresh() {
         try {
@@ -1109,12 +1114,12 @@ const autoRefresh = {
         } catch (error) {
             console.error("自动刷新出错:", error);
             this.retryCount++;
-            
+
             // 如果超过最大重试次数，暂停刷新一段时间
             if (this.retryCount >= this.maxRetryCount) {
                 console.warn(`已达到最大重试次数(${this.maxRetryCount})，暂停自动刷新60秒`);
                 this.stop();
-                
+
                 // 60秒后重新启动
                 setTimeout(() => {
                     this.retryCount = 0;
@@ -1125,11 +1130,11 @@ const autoRefresh = {
             }
         }
     },
-    
+
     // 更新倒计时显示
     updateCountdown() {
         const countdownElement = document.getElementById('refresh-countdown');
-        
+
         // 根据剩余时间设置颜色
         if (this.remainingTime <= 5) {
             countdownElement.style.color = '#e74c3c'; // 红色
@@ -1138,53 +1143,53 @@ const autoRefresh = {
         } else {
             countdownElement.style.color = '#3498db'; // 蓝色
         }
-        
+
         countdownElement.textContent = `${this.remainingTime}秒`;
     },
-    
+
     // 切换自动刷新状态
     toggle() {
         this.enabled = !this.enabled;
-        
+
         if (this.enabled) {
             this.start();
         } else {
             this.stop();
         }
-        
+
         return this.enabled;
     },
-    
+
     // 设置刷新间隔
     setInterval(ms) {
         if (typeof ms !== 'number' || ms <= 5000) {
             ms = 5000; // 最小5秒
         }
-        
+
         this.interval = ms;
-        
+
         // 如果当前已启用，重启计时器使新间隔生效
         if (this.enabled) {
             this.start();
         }
-        
+
         this.saveSettings();
         return this.interval;
     },
-    
+
     // 切换智能模式
     toggleSmartMode() {
         this.smartMode = !this.smartMode;
         this.saveSettings();
         return this.smartMode;
     },
-    
+
     // 处理页面可见性变化
     handleVisibilityChange() {
         this.pageVisible = document.visibilityState === 'visible';
         console.log(`页面可见性: ${this.pageVisible ? '可见' : '不可见'}`);
     },
-    
+
     // 保存设置到localStorage
     saveSettings() {
         const settings = {
@@ -1192,10 +1197,10 @@ const autoRefresh = {
             interval: 5000,
             smartMode: this.smartMode
         };
-        
+
         localStorage.setItem('autoRefreshSettings', JSON.stringify(settings));
     },
-    
+
     // 从localStorage加载设置
     loadSettings() {
         try {
@@ -1204,10 +1209,10 @@ const autoRefresh = {
                 this.interval = settings.interval || 5000;
                 this.smartMode = settings.smartMode !== undefined ? settings.smartMode : true;
                 this.enabled = settings.enabled || false;
-                
+
                 // 更新UI
                 document.getElementById('auto-refresh-toggle').checked = this.enabled;
-                
+
                 // 如果设置为启用，则启动自动刷新
                 if (this.enabled) {
                     this.start();
@@ -1222,10 +1227,10 @@ const autoRefresh = {
 // 智能选择性地更新UI
 function updateActiveSection() {
     const activeSection = appState.activeSection;
-    
+
     // 始终更新系统基本信息
     initSystemInfo();
-    
+
     // 根据当前活动页面选择性更新
     switch (activeSection) {
         case 'dashboard-section':
@@ -1265,7 +1270,7 @@ window.onload = function() {
     timeIndicator.style.fontSize = '12px';
     timeIndicator.innerHTML = '最后更新: <span id="last-update-time">--:--:--</span>';
     statusIndicator.appendChild(timeIndicator);
-    
+
     // 初始化UI
     initSystemInfo();
     initResourceUsage();
@@ -1275,7 +1280,7 @@ window.onload = function() {
     initUsers();
     initHtop();
     initIftop();
-    
+
     // 添加键盘快捷键支持
     document.addEventListener('keydown', function(e) {
         // 按F5刷新数据
@@ -1284,18 +1289,18 @@ window.onload = function() {
             refreshData();
         }
     });
-    
+
     // 添加页面可见性监听
     document.addEventListener('visibilitychange', function() {
         autoRefresh.handleVisibilityChange();
     });
-    
+
     // 定期更新状态点闪烁以表示系统在线
     setInterval(() => {
         const statusDot = document.querySelector('.status-dot');
         statusDot.style.opacity = statusDot.style.opacity === '0.5' ? '1' : '0.5';
     }, 1000);
-    
+
     // 加载自动刷新设置
     autoRefresh.loadSettings();
 };
