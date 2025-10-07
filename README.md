@@ -54,10 +54,7 @@ pip install -r requirements.txt
 > however you can modify the code to remove the restrictions in **/utils/osquery-handler.py**. 
 
 
-## Developer Information
-- [gzqccnu] https://github.com/gzqccnu
-- Contact: gzqccnu@gmail.com
-<br>
+## Developing Notes
 To extend functionality, modify these files:
 
 - Modules in **utils/** implement various data collection functions
