@@ -106,6 +106,6 @@ To extend functionality, modify these files:
 
 - SQL injection protection measures are implemented for osquery functions, but usage should still be restricted to secure environments
 
-> [!Attention]
+> [!Warning]
 > The hole project has no encrypted transmission! If you want to use it in your company or
 > others, you'd better to have https or add other secure methods.
