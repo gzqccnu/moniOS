@@ -4,17 +4,36 @@ A web-based operating system monitoring panel that provides functionality simila
 enabling you to view and analyze Linux system status through a browser.
 
 ## Features
-- **System Overview**: Displays operating system information, resource usage, and network details
+- **System Overview**: 
+Displays operating system information, resource usage, and network details
+  ![](./assets/dashboard.png)
 
-- **Process Monitoring**: htop-like process monitor to view and search system processes
+- **Process Monitoring**: 
+htop-like process monitor to view and search system processes
+  ![](./assets/procmonitor.png)
 
-- **Process View**: Provides detailed process/resource information and visualizations
+- **Process View**: 
+Provides detailed process/resource information and visualizations
+  ![](./assets/procview.png)
 
-- **System Query**: SQL-based query interface using osquery to retrieve system information
+- **User Accounts**: 
+Shows system user account information
+  ![](./assets/userview.png)
 
-- **User Accounts**: Shows system user account information
+- **System Query**: 
+SQL-based query interface using osquery to retrieve system information
+  > more information please refers to [osquery docs](https://osquery.readthedocs.io/en/stable/)
 
-- **Network Traffic Monitoring**: Real-time detailed network traffic visualization
+  ![](./assets/osquery.png)
+
+
+- **Network Traffic Monitoring**: 
+Real-time detailed network traffic visualization
+  ![](./assets/networktraffic.png)
+
+- **SSH remote login:**
+Login your server or other server in the web.
+  ![](./assets/sshlogin.png)
 
 ## System Requirements
 - **Python 3.8+**
@@ -24,6 +43,12 @@ enabling you to view and analyze Linux system status through a browser.
 - **Required**: `osquery` 、`htop`、`iftop`
 
 ## Installation Steps
+> You must install **htop**, **iftop**.
+> In Debian/Ubuntu, you can run command:
+```bash 
+apt install htop iftop 
+```
+
 Clone or download this repository to your Linux server:
 
 ```bash
@@ -80,3 +105,7 @@ To extend functionality, modify these files:
 - The application listens on all network interfaces by default. For production deployments, implement authentication and firewall rules
 
 - SQL injection protection measures are implemented for osquery functions, but usage should still be restricted to secure environments
+
+> [!Attention]
+> The hole project has no encrypted transmission! If you want to use it in your company or
+> others, you'd better to have https or add other secure methods.
