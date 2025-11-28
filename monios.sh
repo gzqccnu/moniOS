@@ -164,5 +164,5 @@ if [[ "$response" == "y" || "$response" == "Y" ]]; then
 EOF
     uv run app.py
 else
-    info "you can start moniOS later by running 'uv run main.py' in the $target_dir directory."
+    info "you can start moniOS later by running 'uv run app.py' in the $target_dir directory."
 fi
