@@ -3,6 +3,8 @@
 A web-based operating system monitoring panel that provides functionality similar to `uname -a`, `ps -ef`, `htop`, `iftop`, and `osquery`, 
 enabling you to view and analyze Linux system status through a browser.
 
+Go [installation steps](#installation-steps) for installation.
+
 ## Features
 - **System Overview**: 
 Displays operating system information, resource usage, and network details
@@ -43,10 +45,18 @@ Login your server or other server in the web.
 - **Required**: `osquery` 、`htop`、`iftop`
 
 ## Installation Steps
+> [!Tip]
+> You can just run script:
+> ```bash
+> curl -LsSf https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh | sh
+> ```
+> to install and run this project
+
+or you can abey following steps.
 > You must install **htop**, **iftop**.
 > In Debian/Ubuntu, you can run command:
 ```bash 
-apt install htop iftop 
+sudo apt install htop iftop 
 ```
 
 Clone or download this repository to your Linux server:
@@ -54,14 +64,29 @@ Clone or download this repository to your Linux server:
 ```bash
 git clone https://github.com/gzqccnu/moniOS.git
 cd moniOS
-# Install Python dependencies:
+```
+
+### Install Python dependencies:
+- traditional way
+```bash
 pip install -r requirements.txt
 # Install system tools:
 # Visit https://osquery.io/downloads for OS-specific packages and instructions
 ```
+
+- modern way
+
+Using python modern package manager: [uv](https://github.com/astral-sh/uv)
+```bash
+# download uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# create a viturl environments
+uv sync
+source .venv/bin/activate
+```
 > Usage
 > Start the server:
-> `sudo python3 app.py`
+> `sudo python3 app.py` or `sudo uv run python app.py`
 > Access via browser:
 > `http://localhost:6789`
 
