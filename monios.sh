@@ -115,7 +115,10 @@ if ! command -v osqueryi &> /dev/null; then
     fi
 fi
 
-info "all dependencies are met. starting moniOS..."
+info "refreshing shell environment..."
+source ~/.bashrc
+
+info "all dependencies are installed. starting moniOS..."
 
 read -p "which directory do you want to clone moniOS into? (default: ~/moniOS)" -r target_dir
 if [ -z "$target_dir" ]; then
