@@ -48,11 +48,15 @@ Login your server or other server in the web.
 > [!Tip]
 > You can just run script:
 > ```bash
-> curl -LsSf https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh | sh
+> curl -o monios.sh https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> chmod +x monios.sh
+> ./monios.sh
 > ```
 > if above command had no reactions, you can also run:
 > ```bash
-> curl -LsSf https://gh-proxy.com/https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh | sh
+> curl -o monios.sh https://gh-proxy.com/https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> chmod +x monios.sh
+> ./monios.sh
 > ```
 > to install and run this project
 
