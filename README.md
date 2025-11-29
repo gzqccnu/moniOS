@@ -50,6 +50,10 @@ Login your server or other server in the web.
 > ```bash
 > curl -LsSf https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh | sh
 > ```
+> if above command had no reactions, you can also run:
+> ```bash
+> curl -LsSf https://gh-proxy.com/https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh | sh
+> ```
 > to install and run this project
 
 or you can abey following steps.
