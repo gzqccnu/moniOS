@@ -20,9 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const clearBtn = document.getElementById('clear-btn');
     const disconnectBtn = document.getElementById('disconnect-btn');
-    const statusIndicator = document.querySelector('.terminal-header .status-indicator');
-    const sidebarStatusDot = document.querySelector('.sidebar-header .status-dot');
-    const sidebarStatusText = document.querySelector('.sidebar-header .status-text');
+    const statusIndicator = document.querySelector('.terminal-header .statas-indicator');
+
     const terminalContainer = document.getElementById('terminal-container');
     const connectionPanel = document.getElementById('connection-panel');
     const connectionInfo = document.getElementById('connection-info');

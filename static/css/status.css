@@ -6,19 +6,24 @@ https://github.com/gzqccnu/moniOS
 .status-indicator {
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    gap: 8px;
+    white-space: nowrap;
+    /* 防止文字换行 */
+    margin-bottom: 15px;
 }
 
 .status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-    background-color: #2ecc71;
-    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    background-color: #4CAF50;
+    display: inline-block;
+    flex-shrink: 0;
 }
 
-.status-text {
-    font-size: 12px;
-    font-weight: 500;
+.status-text,
+.last-update {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: small;
 }

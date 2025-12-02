@@ -251,7 +251,7 @@ function initHtop() {
 
     // 更新内存和交换空间使用率
     const memoryUsage = (parseFloat(mockData.htopData.memUsed) /
-                        (parseFloat(mockData.htopData.memUsed) + parseFloat(mockData.htopData.memFree))) * 100;
+        (parseFloat(mockData.htopData.memUsed) + parseFloat(mockData.htopData.memFree))) * 100;
     document.getElementById('htop-memory-fill').style.width = `${isNaN(memoryUsage) ? 0 : memoryUsage}%`;
 
     const swapTotal = parseFloat(mockData.htopData.swapUsed) + parseFloat(mockData.htopData.swapFree);
@@ -343,7 +343,7 @@ function getUsageClass(usage) {
 
 // 根据进程状态返回相应的CSS类
 function getStateClass(state) {
-    switch(state) {
+    switch (state) {
         case 'R': return 'state-running';
         case 'S': return 'state-sleeping';
         case 'T': return 'state-stopped';
@@ -361,49 +361,49 @@ async function initIftop() {
 
         // 元素引用
         const updateEl = document.getElementById('iftop-update-time');
-        const countEl  = document.getElementById('iftop-connection-count');
-        const rxEl     = document.getElementById('iftop-total-rx');
-        const txEl     = document.getElementById('iftop-total-tx');
-        const tbody    = document.getElementById('iftop-connections');
+        const countEl = document.getElementById('iftop-connection-count');
+        const rxEl = document.getElementById('iftop-total-rx');
+        const txEl = document.getElementById('iftop-total-tx');
+        const tbody = document.getElementById('iftop-connections');
 
         // 清空旧内容
         tbody.innerHTML = '';
 
         // 错误处理
         if (data.error) {
-        tbody.innerHTML = `
+            tbody.innerHTML = `
             <tr>
             <td colspan="5" style="text-align:center; color:#e74c3c;">
                 ${data.error}: ${data.details || ''}
             </td>
             </tr>`;
-        return;
+            return;
         }
 
         // 更新头部信息
         if (updateEl) updateEl.textContent = data.update_time || '--:--:--';
-        if (countEl)  countEl.textContent  = (data.connections || []).length;
-        if (rxEl)     rxEl.textContent     = `${data.total_rx_mb || 0} bytes`;
-        if (txEl)     txEl.textContent     = `${data.total_tx_mb || 0} bytes`;
+        if (countEl) countEl.textContent = (data.connections || []).length;
+        if (rxEl) rxEl.textContent = `${data.total_rx_mb || 0} bytes`;
+        if (txEl) txEl.textContent = `${data.total_tx_mb || 0} bytes`;
 
         // 填充连接表格
         const conns = data.connections || [];
         if (conns.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">没有活动的网络连接</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">没有活动的网络连接</td></tr>';
         } else {
-        const frag = document.createDocumentFragment();
-        conns.forEach(c => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-            <td>${c.source  || 'Unknown'}</td>
+            const frag = document.createDocumentFragment();
+            conns.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>${c.source || 'Unknown'}</td>
             <td>${c.destination || 'Unknown'}</td>
             <td>${c.process || 'Unknown'}</td>
             <td>${c.sent != null ? c.sent : 'N/A'}</td>
             <td>${c.received != null ? c.received : 'N/A'}</td>
             `;
-            frag.appendChild(tr);
-        });
-        tbody.appendChild(frag);
+                frag.appendChild(tr);
+            });
+            tbody.appendChild(frag);
         }
     } catch (err) {
         console.error('initIftop error:', err);
@@ -423,32 +423,32 @@ const trafficChart = new Chart(trafficCtx, {
     data: {
         labels: [],
         datasets: [
-        {
-            label: 'Total Received (bytes)',
-            data: [],
-            borderColor: '#3498db',
-            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-            tension: 0.1
-        },
-        {
-            label: 'Total Sent (bytes)',
-            data: [],
-            borderColor: '#2ecc71',
-            backgroundColor: 'rgba(46, 204, 113, 0.1)',
-            tension: 0.1
-        }
+            {
+                label: 'Total Received (bytes)',
+                data: [],
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                tension: 0.1
+            },
+            {
+                label: 'Total Sent (bytes)',
+                data: [],
+                borderColor: '#2ecc71',
+                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                tension: 0.1
+            }
         ]
     },
     options: {
         responsive: true,
         scales: {
-        y: {
-            beginAtZero: true,
-            title: {
-            display: true,
-            text: 'bytes'
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'bytes'
+                }
             }
-        }
         }
     }
 });
@@ -465,13 +465,13 @@ async function updateIftopData() {
 
         // 错误处理
         if (data.error) {
-        document.getElementById('iftop-connections').innerHTML = `
+            document.getElementById('iftop-connections').innerHTML = `
             <tr>
             <td colspan="5" style="text-align:center; color:#e74c3c;">
                 ${data.error}: ${data.details || ''}
             </td>
             </tr>`;
-        return;
+            return;
         }
 
         // 更新头部信息
@@ -482,11 +482,11 @@ async function updateIftopData() {
 
         // 更新 Chart 数据
         const now = new Date();
-        const t = now.toTimeString().slice(0,8);
+        const t = now.toTimeString().slice(0, 8);
         if (trafficChart.data.labels.length >= 20) {
-        trafficChart.data.labels.shift();
-        trafficChart.data.datasets[0].data.shift();
-        trafficChart.data.datasets[1].data.shift();
+            trafficChart.data.labels.shift();
+            trafficChart.data.datasets[0].data.shift();
+            trafficChart.data.datasets[1].data.shift();
         }
         trafficChart.data.labels.push(t);
         trafficChart.data.datasets[0].data.push(data.total_rx_mb || 0);
@@ -498,19 +498,19 @@ async function updateIftopData() {
         tbody.innerHTML = '';
         const conns = data.connections || [];
         if (conns.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">没有活动的网络连接</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">没有活动的网络连接</td></tr>';
         } else {
-        conns.forEach(c => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
+            conns.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
             <td>${c.source || 'Unknown'}</td>
             <td>${c.destination || 'Unknown'}</td>
             <td>${c.process || 'Unknown'}</td>
             <td>${c.sent != null ? c.sent : 'N/A'}</td>
             <td>${c.received != null ? c.received : 'N/A'}</td>
             `;
-            tbody.appendChild(tr);
-        });
+                tbody.appendChild(tr);
+            });
         }
 
     } catch (err) {
@@ -599,7 +599,7 @@ function searchProcesses() {
 // 节流函数：限制函数调用频率
 function throttle(func, delay) {
     let lastCall = 0;
-    return function(...args) {
+    return function (...args) {
         const now = Date.now();
         if (now - lastCall >= delay) {
             lastCall = now;
@@ -611,7 +611,7 @@ function throttle(func, delay) {
 // 防抖函数：延迟执行，避免频繁调用
 function debounce(func, delay) {
     let timeoutId;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             func.apply(this, args);
@@ -620,7 +620,7 @@ function debounce(func, delay) {
 }
 
 // 按钮刷新
-const refreshData = throttle(async function() {
+const refreshData = throttle(async function () {
     // 如果已经在刷新中，则返回
     if (appState.isRefreshing) return;
 
@@ -761,50 +761,6 @@ function updateNetworkChart() {
 
 // 初始化iftop数据
 
-// 页面加载时初始化所有数据和图表
-window.onload = function() {
-    // 添加更新时间显示
-    const statusIndicator = document.querySelector('.status-indicator');
-    const timeIndicator = document.createElement('div');
-    timeIndicator.style.marginLeft = '10px';
-    timeIndicator.style.fontSize = '12px';
-    timeIndicator.innerHTML = '最后更新: <span id="last-update-time">--:--:--</span>';
-    statusIndicator.appendChild(timeIndicator);
-
-    // 初始化UI
-    initSystemInfo();
-    initResourceUsage();
-    initNetworkInfo();
-    initNetworkChart();
-    initProcesses();
-    initUsers();
-    initHtop();
-    initPerfTop();
-    initIftop();
-
-    // 添加键盘快捷键支持
-    document.addEventListener('keydown', function(e) {
-        // 按F5刷新数据
-        if (e.key === 'F5') {
-            e.preventDefault();
-            refreshData();
-        }
-    });
-
-    // 添加页面可见性监听
-    document.addEventListener('visibilitychange', function() {
-        autoRefresh.handleVisibilityChange();
-    });
-
-    // 定期更新状态点闪烁以表示系统在线
-    setInterval(() => {
-        const statusDot = document.querySelector('.status-dot');
-        statusDot.style.opacity = statusDot.style.opacity === '0.5' ? '1' : '0.5';
-    }, 1000);
-
-    // 加载自动刷新设置
-    autoRefresh.loadSettings();
-};
 
 // 自动刷新相关变量和函数
 let autoRefreshInterval = null;
@@ -948,15 +904,15 @@ async function smartRefresh() {
 
         // 记录更新时间
         appState.lastUpdateTime = Date.now();
-                updateLastUpdateTime();
-            } catch (error) {
-                console.error(`智能刷新出错:`, error);
-            } finally {
-                // 恢复刷新按钮状态
-                refreshBtn.textContent = originalText;
-                refreshBtn.disabled = false;
-                appState.isRefreshing = false;
-            }
+        updateLastUpdateTime();
+    } catch (error) {
+        console.error(`智能刷新出错:`, error);
+    } finally {
+        // 恢复刷新按钮状态
+        refreshBtn.textContent = originalText;
+        refreshBtn.disabled = false;
+        appState.isRefreshing = false;
+    }
 }
 
 // 根据端点和数据更新对应的数据模型
@@ -1262,13 +1218,10 @@ function toggleAutoRefresh() {
 }
 
 // 页面加载时初始化所有数据和图表
-window.onload = function() {
+window.onload = function () {
     // 添加更新时间显示
     const statusIndicator = document.querySelector('.status-indicator');
     const timeIndicator = document.createElement('div');
-    timeIndicator.style.marginLeft = '10px';
-    timeIndicator.style.fontSize = '12px';
-    timeIndicator.innerHTML = '最后更新: <span id="last-update-time">--:--:--</span>';
     statusIndicator.appendChild(timeIndicator);
 
     // 初始化UI
@@ -1282,7 +1235,7 @@ window.onload = function() {
     initIftop();
 
     // 添加键盘快捷键支持
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // 按F5刷新数据
         if (e.key === 'F5') {
             e.preventDefault();
@@ -1291,7 +1244,7 @@ window.onload = function() {
     });
 
     // 添加页面可见性监听
-    document.addEventListener('visibilitychange', function() {
+    document.addEventListener('visibilitychange', function () {
         autoRefresh.handleVisibilityChange();
     });
 
