@@ -20,14 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const clearBtn = document.getElementById('clear-btn');
     const disconnectBtn = document.getElementById('disconnect-btn');
-<<<<<<< HEAD
-    const statusIndicator = document.querySelector('.terminal-header .status-indicator');
-    const sidebarStatusDot = document.querySelector('.sidebar-header .status-dot');
-    const sidebarStatusText = document.querySelector('.sidebar-header .status-text');
-=======
     const statusIndicator = document.querySelector('.terminal-header .statas-indicator');
 
->>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)
     const terminalContainer = document.getElementById('terminal-container');
     const connectionPanel = document.getElementById('connection-panel');
     const connectionInfo = document.getElementById('connection-info');
