@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
+    <title>操作系统监控面板</title>
+    <!-- 添加Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- 添加终端所需依赖 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/xterm@5.1.0/css/xterm.css">
+
+    <!-- 添加文件传输系统依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/status.css">
+    <link rel="stylesheet" href="css/refresh.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/process.css">
+    <link rel="stylesheet" href="css/htop.css">
+    <link rel="stylesheet" href="css/osquery.css">
+    <link rel="stylesheet" href="css/iftop.css">
+    <link rel="stylesheet" href="css/terminal.css">
+    <link rel="stylesheet" href="css/doucumentgetway.css">
+    <style>
+        /* 加载本地字体 */
+        @font-face {
+            font-family: 'Cascadia Code';
+            src: url("/terminal/Cascadia-Code-Regular-2.ttf") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Cascadia Code';
+            src: url("/terminal/Cascadia-Code-Regular-2.ttf") format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', 'Segoe UI', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .label {
+            font-weight: 500;
+            color: #7f8c8d;
+        }
+
+        .value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .page-title {
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 26px;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* 高亮网络连接特定字段 */
+        .socket-event-action {
+            color: #61afef;
+            font-weight: 600;
+        }
+
+        .socket-event-process {
+            color: #98c379;
+            font-weight: 600;
+        }
+
+        .socket-event-address {
+            color: #e06c75;
+        }
+
+        .socket-event-time {
+            color: #d19a66;
+        }
+
+        /* 进程监控和用户账户表格 */
+        #processes-table, #users-table {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+        }
+
+        #processes-table td, #users-table td {
+            font-size: 14px;
+        }
+
+        /* htop进程视图使用等宽字体 */
+        .htop-container table {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                padding: 20px 0;
+            }
+
+            .sidebar-header h1, .status-text, .nav-item-text {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>操作系统监控面板</h1>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">已连接</span>
+                <span class="last-update">最后更新: <span id="last-update-time">--:--:--</span>
+                </span>
+            </div>
+            <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
+
+            <!-- 添加自动刷新开关 -->
+            <div class="auto-refresh-container">
+                <span class="auto-refresh-label">自动刷新</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="auto-refresh-toggle" onchange="toggleAutoRefresh()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="countdown-container">
+                下次刷新: <span id="refresh-countdown">--</span>
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="openSection('dashboard-section')">
+                <span class="nav-item-text">仪表盘概览</span>
+            </li>
+            <li class="nav-item" onclick="openSection('processes-section')">
+                <span class="nav-item-text">进程监控</span>
+            </li>
+            <li class="nav-item" onclick="openSection('htop-section')">
+                <span class="nav-item-text">进程视图</span>
+            </li>
+            <li class="nav-item" onclick="openSection('users-section')">
+                <span class="nav-item-text">账户视图</span>
+            </li>
+            <li class="nav-item" onclick="openSection('osquery-section')">
+                <span class="nav-item-text">系统信息查询</span>
+            </li>
+            <li class="nav-item" onclick="openSection('iftop-section')">
+                <span class="nav-item-text">网络流量监控</span>
+            </li>
+            <li class="nav-item" onclick="openSection('terminal-section')">
+                <span class="nav-item-text">SSH终端</span>
+            </li>
+            <!-- 添加文件传输系统导航项 -->
+            <li class="nav-item" onclick="openSection('file-transfer-section')">
+                <span class="nav-item-text">文件传输系统</span>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="main-content">
+        <div class="container">
+            <!-- 仪表盘概览 -->
+            <div class="content-section active" id="dashboard-section">
+                <h1 class="page-title">系统概览</h1>
+                <div class="dashboard">
+                    <div class="card">
+                        <h2>系统信息</h2>
+                        <ul class="data-list" id="system-info">
+                            <li><span class="label">主机名:</span> <span class="value" id="hostname">加载中...</span></li>
+                            <li><span class="label">操作系统:</span> <span class="value" id="os-name">加载中...</span></li>
+                            <li><span class="label">内核版本:</span> <span class="value" id="os-version">加载中...</span></li>
+                            <li><span class="label">计算机名:</span> <span class="value" id="computer-name">加载中...</span></li>
+                            <li><span class="label">CPU架构:</span> <span class="value" id="cpu-arch">加载中...</span></li>
+                            <li><span class="label">CPU型号:</span> <span class="value" id="cpu-model">加载中...</span></li>
+                            <li><span class="label">物理CPU核心:</span> <span class="value" id="cpu-cores">加载中...</span></li>
+                            <li><span class="label">系统运行时间:</span> <span class="value" id="uptime">加载中...</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2>资源使用</h2>
+                        <div>
+                            <h3>CPU使用率</h3>
+                            <div class="performance-bar">
+                                <div class="performance-fill" id="cpu-usage-bar" style="width: 0%;"></div>
+                                <div class="performance-text" id="cpu-usage-text">0%</div>
+                            </div>
+
+                            <h3>内存使用率</h3>
+                            <div class="performance-bar">
+                                <div class="performance-fill" id="memory-usage-bar" style="width: 0%;"></div>
+                                <div class="performance-text" id="memory-usage-text">0%</div>
+                            </div>
+
+                            <h3>磁盘使用率</h3>
+                            <div class="performance-bar">
+                                <div class="performance-fill" id="disk-usage-bar" style="width: 0%;"></div>
+                                <div class="performance-text" id="disk-usage-text">0%</div>
+                            </div>
+                        </div>
+                        <ul class="data-list">
+                            <li><span class="label">内存总量:</span> <span class="value" id="total-memory">加载中...</span></li>
+                            <li><span class="label">可用内存:</span> <span class="value" id="free-memory">加载中...</span></li>
+                            <li><span class="label">磁盘总空间:</span> <span class="value" id="total-disk">加载中...</span></li>
+                            <li><span class="label">可用磁盘空间:</span> <span class="value" id="free-disk">加载中...</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2>网络信息</h2>
+                        <ul class="data-list" id="network-info">
+                            <li><span class="label">主要IP地址:</span> <span class="value" id="primary-ip">加载中...</span></li>
+                            <li><span class="label">MAC地址:</span> <span class="value" id="mac-address">加载中...</span></li>
+                            <li><span class="label">DNS服务器:</span> <span class="value" id="dns-servers">加载中...</span></li>
+                            <li><span class="label">网关:</span> <span class="value" id="gateway">加载中...</span></li>
+                        </ul>
+                        <div>
+                            <h3>网络使用</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="network-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 进程监控 -->
+            <div class="content-section" id="processes-section">
+                <h1 class="page-title">进程监控</h1>
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="process-search" placeholder="按进程名或PID搜索...">
+                        <button onclick="searchProcesses()">搜索</button>
+                    </div>
+                    <table id="processes-table">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>名称</th>
+                                <th>用户</th>
+                                <th>CPU %</th>
+                                <th>内存 %</th>
+                                <th>启动时间</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processes-body">
+                            <tr>
+                                <td colspan="7" style="text-align: center;">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- htop视图 -->
+            <div class="content-section" id="htop-section">
+                <h1 class="page-title">进程视图</h1>
+                <div class="card">
+                    <div class="htop-container">
+                        <div class="htop-header">
+                            <span>进程: <span id="htop-process-count">0</span></span>
+                            <span style="margin-left: 20px;">线程: <span id="htop-thread-count">0</span></span>
+                            <span style="margin-left: 20px;">正在运行: <span id="htop-running-count">0</span></span>
+                            <span style="margin-left: 20px;">负载平均值: <span id="htop-load-avg">0.00 0.00 0.00</span></span>
+                            <span style="margin-left: 20px;">运行时间: <span id="htop-uptime">0天 00:00:00</span></span>
+                        </div>
+
+                        <div>
+                            <div>CPU[<span style="color:#3498db;">用户</span>:<span id="htop-cpu-user">0.0%</span> <span style="color:#2ecc71;">系统</span>:<span id="htop-cpu-system">0.0%</span> <span style="color:#e74c3c;">中断</span>:<span id="htop-cpu-irq">0.0%</span> <span style="color:#f1c40f;">空闲</span>:<span id="htop-cpu-idle">0.0%</span>]</div>
+                            <div class="cpu-bars" id="htop-cpu-bars">
+                                <!-- CPU bars will be dynamically generated -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <div>内存[<span style="color:#3498db;">已用</span>:<span id="htop-mem-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-mem-free">0K</span> <span style="color:#e74c3c;">缓冲区</span>:<span id="htop-mem-buff">0K</span>]</div>
+                            <div class="memory-bar">
+                                <div class="memory-fill" id="htop-memory-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div>交换空间[<span style="color:#3498db;">已用</span>:<span id="htop-swap-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-swap-free">0K</span>]</div>
+                            <div class="memory-bar">
+                                <div class="memory-fill" id="htop-swap-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <table class="perf-table" style="margin-top: 15px;">
+                            <thead>
+                                <tr>
+                                    <th>PID</th>
+                                    <th>用户</th>
+                                    <th>优先级</th>
+                                    <th>NI</th>
+                                    <th>虚拟内存</th>
+                                    <th>物理内存</th>
+                                    <th>共享内存</th>
+                                    <th>状态</th>
+                                    <th>CPU%</th>
+                                    <th>内存%</th>
+                                    <th>时间</th>
+                                    <th>命令</th>
+                                </tr>
+                            </thead>
+                            <tbody id="htop-processes">
+                                <!-- Process data will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 账户视图 -->
+            <div class="content-section" id="users-section">
+                <h1 class="page-title">账户视图</h1>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>用户ID</th>
+                                <th>组ID</th>
+                                <th>主目录</th>
+                                <th>Shell</th>
+                                <th>描述</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 系统信息查询 -->
+            <div class="content-section" id="osquery-section">
+                <h1 class="page-title">操作系统信息查询</h1>
+                <div class="card">
+                    <h2>操作系统信息 SQL查询</h2>
+                    <div class="search-bar">
+                        <input type="text" id="osquery-input" placeholder="输入SQL查询...">
+                        <button onclick="runOSQuery()">执行</button>
+                    </div>
+                    <div>
+                        <h3>常用查询示例：</h3>
+                        <ul>
+                            <li><a href="#" onclick="setOSQueryExample('.tables')">显示所有可用表</a></li>
+                            <li><a href="#" onclick="setOSQueryExample('SELECT * FROM processes LIMIT 10;')">查看前10个进程</a></li>
+                            <li><a href="#" onclick="setOSQueryExample('SELECT * FROM users;')">列出所有用户</a></li>
+                            <li><a href="#" onclick="setOSQueryExample('SELECT * FROM system_info;')">系统信息</a></li>
+                            <li><a href="#" onclick="setOSQueryExample('SELECT * FROM listening_ports;')">监听端口</a></li>
+			                <li><a href="#" onclick="setOSQueryExample('SELECT * FROM systemd_units LIMIT 10;')">系统服务</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>查询结果：</h3>
+                        <pre id="osquery-results" style="background-color: #f9f9f9; padding: 15px; overflow: auto; border-radius: 5px; border: 1px solid #ddd;">准备执行查询...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 网络流量监控 -->
+            <div class="content-section" id="iftop-section">
+                <h1 class="page-title">网络流量监控</h1>
+                <div class="card">
+                    <div class="iftop-header">
+                        <div class="iftop-meta">
+                            <span>Last Update: <strong id="iftop-update-time">--:--:--</strong></span>
+                            <span>Connections: <strong id="iftop-connection-count">0</strong></span>
+                            <span>Total RX: <strong id="iftop-total-rx">0 KB</strong></span>
+                            <span>Total TX: <strong id="iftop-total-tx">0 KB</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="traffic-chart">
+                        <canvas id="trafficChart" height="150"></canvas>
+                    </div>
+                    <table class="perf-table">
+                        <thead>
+                            <tr>
+                            <th>Source</th>
+                            <th>Destination</th>
+                            <th>Process</th>
+                            <th>Sent (bytes)</th>
+                            <th>Received (bytes)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="iftop-connections">
+                            <tr>
+                            <td colspan="5" class="no-data">Loading network data…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SSH终端 -->
+            <div class="content-section" id="terminal-section">
+                <h1 class="page-title">SSH终端</h1>
+                <div class="main-content" id="terminal-content">
+                    <!-- 连接设置面板 -->
+                    <div class="connection-panel fullscreen" id="connection-panel">
+                        <h2 class="panel-title">
+                            <i class="fas fa-server"></i> 连接设置
+                        </h2>
+                        <form id="connection-form">
+                                        <div class="form-group">
+                <label for="ssh_hostname">主机地址</label>
+                <input type="text" id="ssh_hostname" placeholder="例如: 192.168.1.100" required>
+            </div>
+                            <div class="form-group">
+                                <label for="port">端口</label>
+                                <input type="number" id="port" placeholder="22" value="22" min="1" max="65535" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">用户名</label>
+                                <input type="text" id="username" placeholder="例如: root" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">密码</label>
+                                <input type="password" id="password" required>
+                            </div>
+                            <button type="submit" class="btn-connect">
+                                <i class="fas fa-plug"></i> 连接
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 终端容器 -->
+                    <div class="terminal-container hidden fullscreen" id="terminal-container">
+                        <div class="terminal-header">
+                            <h3>
+                                <i class="fas fa-terminal"></i> 终端
+                                <span class="statas-indicator"></span>
+                                <span id="connection-info"></span>
+                            </h3>
+                            <div class="terminal-controls">
+                                <button id="clear-btn">
+                                    <i class="fas fa-eraser"></i> 清屏
+                                </button>
+                                <button id="disconnect-btn">
+                                    <i class="fas fa-plug-circle-xmark"></i> 断开连接
+                                </button>
+                            </div>
+                        </div>
+                        <div id="terminal"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文件传输系统 -->
+            <div class="content-section" id="file-transfer-section">
+                <h1 class="page-title">双向文件传输系统</h1>
+                
+                <!-- Header -->
+                <header class="gradient-bg text-white shadow-lg mb-8">
+                    <div class="container mx-auto px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-exchange text-xl"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold">双向文件传输系统</h1>
+                                    <p class="text-blue-100 text-sm">tRPC风格 · 安全高效</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <div class="text-sm text-blue-100">连接状态</div>
+                                    <div class="flex items-center space-x-2">
+                                        <div id="connectionStatus" class="w-2 h-2 bg-red-400 rounded-full"></div>
+                                        <span id="connectionText" class="text-sm">未连接</span>
+                                    </div>
+                                </div>
+                                <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition-all duration-300">
+                                    <i class="fa fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                            <!-- Main Content -->
+            <main class="container mx-auto px-6 py-8">
+                <!-- Connection Panel -->
+                <div class="mb-8 fade-in">
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover-scale">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fa fa-plug text-primary mr-2"></i>
+                            连接配置
+                        </h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">角色模式</label>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="role" value="server" class="text-primary focus:ring-primary" checked>
+                                        <span class="ml-2">公网服务器</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="role" value="client" class="text-primary focus:ring-primary">
+                                        <span class="ml-2">私网客户端</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">服务器地址</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" id="serverAddress" placeholder="ws://localhost:8080" 
+                                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <button id="connectBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                        <i class="fa fa-connectdevelop mr-1"></i>
+                                        连接
+                                    </button>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">连接密码</label>
+                                    <input type="password" id="serverPassword" placeholder="请输入连接密码" 
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+                    <!-- Transfer Panels -->
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- Send Panel -->
+                        <div class="fade-in">
+                            <div class="bg-white rounded-xl shadow-lg p-6 hover-scale">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                                    <i class="fa fa-upload text-accent mr-2"></i>
+                                    发送文件
+                                </h2>
+                                
+                                <!-- Drag and Drop Area -->
+                                <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-all duration-300 cursor-pointer">
+                                    <div class="space-y-3">
+                                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                                            <i class="fa fa-cloud-upload text-2xl text-primary"></i>
+                                        </div>
+                                        <h3 class="text-lg font-medium text-gray-700">拖拽文件到这里</h3>
+                                        <p class="text-gray-500 text-sm">或者</p>
+                                        <button id="browseBtn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-all duration-300">
+                                            <i class="fa fa-file mr-1"></i>
+                                            选择文件
+                                        </button>
+                                        <input type="file" id="fileInput" class="hidden" multiple>
+                                    </div>
+                                </div>
+
+                                <!-- Upload Queue -->
+                                <div id="uploadQueue" class="mt-6 space-y-3 hidden">
+                                    <h4 class="font-medium text-gray-700">传输队列</h4>
+                                    <div id="uploadItems" class="space-y-2">
+                                        <!-- Upload items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Receive Panel -->
+                        <div class="fade-in">
+                            <div class="bg-white rounded-xl shadow-lg p-6 hover-scale">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                                    <i class="fa fa-download text-warning mr-2"></i>
+                                    接收文件
+                                </h2>
+                                
+                                <!-- Received Files List -->
+                                <div id="receivedFiles" class="space-y-3">
+                                    <div class="text-center text-gray-500 py-8">
+                                        <i class="fa fa-inbox text-4xl mb-3"></i>
+                                        <p>等待接收文件...</p>
+                                    </div>
+                                </div>
+
+                                <!-- Download Queue -->
+                                <div id="downloadQueue" class="mt-6 space-y-3 hidden">
+                                    <h4 class="font-medium text-gray-700">下载队列</h4>
+                                    <div id="downloadItems" class="space-y-2">
+                                        <!-- Download items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File System Panel -->
+                    <div class="mt-8 fade-in">
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover-scale">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-folder-open text-secondary mr-2"></i>
+                                远程文件系统
+                            </h2>
+                            
+                            <!-- File System Navigation -->
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-2">
+                                    <button id="refreshBtn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <i class="fa fa-refresh text-gray-600"></i>
+                                    </button>
+                                    <button id="parentDirBtn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <i class="fa fa-arrow-up text-gray-600"></i>
+                                    </button>
+                                    <span id="currentPath" class="text-sm text-gray-600">/</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <select id="viewMode" class="text-sm border border-gray-300 rounded px-2 py-1">
+                                        <option value="list">列表视图</option>
+                                        <option value="grid">网格视图</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Files Grid/List -->
+                            <div id="fileSystem" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <!-- Files will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Settings Modal -->
+                <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">系统设置</h3>
+                            <button id="closeSettings" class="text-gray-500 hover:text-gray-700">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">分片大小</label>
+                                <select id="chunkSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="16384">16KB</option>
+                                    <option value="32768" selected>32KB</option>
+                                    <option value="65536">64KB</option>
+                                    <option value="131072">128KB</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">最大并发数</label>
+                                <input type="number" id="maxConcurrent" value="3" min="1" max="10"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">传输加密</label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" id="enableEncryption" checked class="text-primary focus:ring-primary">
+                                    <span class="ml-2">启用端到端加密</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <button id="cancelSettings" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                取消
+                            </button>
+                            <button id="saveSettings" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                                保存设置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
+    <script src="js/api_client.js"></script>
+    <script src="js/network-chart.js"></script>
+    <script src="js/osquery.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/file-transfer.js"></script>
+    <script src="js/tailwind.config.js"></script>
+
+</body>
+</html>

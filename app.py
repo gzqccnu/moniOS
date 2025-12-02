@@ -43,6 +43,7 @@ ssh_manager = SSHManager()
 # 初始化日志
 logger = setup_logger('app')
 
+<<<<<<< HEAD
 # 前端静态文件服务
 @app.route('/')
 def index():
@@ -54,6 +55,22 @@ def terminal():
 
 @app.route('/<path:path>')
 def static_files(path):
+=======
+# 前端静态文件服务（修改后）
+@app.route('/')
+def index():
+    # 改为指向复制后的 HTML 文件
+    return send_from_directory('static', 'dashboard_os_info_copy.html')
+
+@app.route('/terminal')
+def terminal():
+    # 同上，统一指向复制后的文件
+    return send_from_directory('static', 'dashboard_os_info_copy.html')
+
+@app.route('/<path:path>')
+def static_files(path):
+    # 通用静态文件路由（比如 CSS/JS/图片等，无需修改）
+>>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)
     return send_from_directory('static', path)
 
 # API端点：获取所有监控数据
@@ -380,6 +397,7 @@ if __name__ == '__main__':
     if not os.path.exists('static'):
         os.makedirs('static')
 
+<<<<<<< HEAD
     # 将前端HTML文件复制到static目录（每次启动都更新）
     html_file = 'dashboard_os_info.html'
     if os.path.exists(html_file):
@@ -388,5 +406,9 @@ if __name__ == '__main__':
         shutil.copy(html_file, os.path.join('static', html_file))
 
     # 使用socketio启动应用
+=======
+    html_file = 'static/dashboard_os_info.html'
+
+>>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)
     print("启动SSH终端服务器，访问 http://127.0.0.1:6789/terminal 使用SSH终端")
     socketio.run(app, host='127.0.0.1', port=6789, debug=True)

@@ -3,6 +3,7 @@ Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
 https://github.com/gzqccnu/moniOS
 */
 
+<<<<<<< HEAD
 .status-indicator {
     display: flex;
     align-items: center;
@@ -22,3 +23,27 @@ https://github.com/gzqccnu/moniOS
     font-size: 12px;
     font-weight: 500;
 }
+=======
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap; /* 防止文字换行 */
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 100%;
+            background-color: #4CAF50;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .status-text, .last-update {
+            display: inline-block;
+            vertical-align: middle;
+            font-size: small;
+        }
+>>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)

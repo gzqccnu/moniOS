@@ -761,6 +761,7 @@ function updateNetworkChart() {
 
 // 初始化iftop数据
 
+<<<<<<< HEAD
 // 页面加载时初始化所有数据和图表
 window.onload = function() {
     // 添加更新时间显示
@@ -805,6 +806,8 @@ window.onload = function() {
     // 加载自动刷新设置
     autoRefresh.loadSettings();
 };
+=======
+>>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)
 
 // 自动刷新相关变量和函数
 let autoRefreshInterval = null;
@@ -1266,9 +1269,12 @@ window.onload = function() {
     // 添加更新时间显示
     const statusIndicator = document.querySelector('.status-indicator');
     const timeIndicator = document.createElement('div');
+<<<<<<< HEAD
     timeIndicator.style.marginLeft = '10px';
     timeIndicator.style.fontSize = '12px';
     timeIndicator.innerHTML = '最后更新: <span id="last-update-time">--:--:--</span>';
+=======
+>>>>>>> 0de3d1c (fix: fonts display in status bar and in the terminal)
     statusIndicator.appendChild(timeIndicator);
 
     // 初始化UI
