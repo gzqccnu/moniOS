@@ -41,9 +41,12 @@ https://github.com/gzqccnu/moniOS
     gap: 30px;
     flex-wrap: wrap;
     padding: 0;
-    scroll-margin-top: 20px; /* add scrolling margin so that there is a certain upper margin when scrolling to the element. */
-    margin-left: 0; /* reset the left margin of the nested main content. */
-    justify-content: center; /* center display */
+    scroll-margin-top: 20px;
+    /* add scrolling margin so that there is a certain upper margin when scrolling to the element. */
+    margin-left: 0;
+    /* reset the left margin of the nested main content. */
+    justify-content: center;
+    /* center display */
 }
 
 /* page title style should be consistent with other pages. */
@@ -80,13 +83,13 @@ https://github.com/gzqccnu/moniOS
     margin: 0 auto;
     background-color: white;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .connection-panel.fullscreen:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .panel-title {
@@ -115,7 +118,8 @@ https://github.com/gzqccnu/moniOS
     color: #2c3e50;
 }
 
-.form-group input, .form-group select {
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 12px 15px;
     border-radius: 8px;
@@ -188,13 +192,13 @@ https://github.com/gzqccnu/moniOS
     margin: 0 auto;
     background-color: #1e1e1e;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .terminal-container.fullscreen:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .terminal-header {
@@ -217,7 +221,7 @@ https://github.com/gzqccnu/moniOS
     margin: 0;
 }
 
-.status-indicator {
+.statas-indicator {
     display: inline-block;
     width: 12px;
     height: 12px;
@@ -226,7 +230,7 @@ https://github.com/gzqccnu/moniOS
     margin-left: 10px;
 }
 
-.status-indicator.connected {
+.statas-indicator.connected {
     background: #00cc66;
     box-shadow: 0 0 10px #00cc66;
 }
