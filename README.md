@@ -1,5 +1,9 @@
 # moniOS
 
+<p align="center">
+<a ><b>English</b></a> | <a href="README.zh-CN.md"><b>中文</b></a>
+</p>
+
 A web-based operating system monitoring panel that provides functionality similar to `uname -a`, `ps -ef`, `htop`, `iftop`, and `osquery`, 
 enabling you to view and analyze Linux system status through a browser.
 
