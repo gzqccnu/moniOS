@@ -5,6 +5,7 @@ https://github.com/gzqccnu/moniOS
 
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,9 @@ https://github.com/gzqccnu/moniOS
     <!-- 添加Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
@@ -110,11 +113,13 @@ https://github.com/gzqccnu/moniOS
         }
 
         /* 进程监控和用户账户表格 */
-        #processes-table, #users-table {
+        #processes-table,
+        #users-table {
             font-family: 'Inter', 'Noto Sans SC', sans-serif;
         }
 
-        #processes-table td, #users-table td {
+        #processes-table td,
+        #users-table td {
             font-size: 14px;
         }
 
@@ -130,7 +135,9 @@ https://github.com/gzqccnu/moniOS
                 padding: 20px 0;
             }
 
-            .sidebar-header h1, .status-text, .nav-item-text {
+            .sidebar-header h1,
+            .status-text,
+            .nav-item-text {
                 display: none;
             }
 
@@ -148,7 +155,8 @@ https://github.com/gzqccnu/moniOS
             display: flex;
             align-items: center;
             gap: 8px;
-            white-space: nowrap; /* 防止文字换行 */
+            white-space: nowrap;
+            /* 防止文字换行 */
             margin-bottom: 15px;
         }
 
@@ -160,25 +168,34 @@ https://github.com/gzqccnu/moniOS
             display: inline-block;
         }
 
-        .status-text, .last-update {
+        .status-text,
+        .last-update {
             display: inline-block;
             vertical-align: middle;
         }
 
         /* 确保所有状态文本横向排列 */
-        .status-text, .last-update, #sidebar-last-update {
+        .status-text,
+        .last-update,
+        #sidebar-last-update {
             writing-mode: horizontal-tb !important;
             text-orientation: mixed !important;
         }
 
         /* 确保所有文本横向显示 */
-        body, .nav-item, .card, .data-list, .performance-bar,
-        .htop-container, .perf-table, .iftop-meta,
-        .terminal-header, #connection-info {
+        body,
+        .nav-item,
+        .card,
+        .data-list,
+        .performance-bar,
+        .htop-container,
+        .perf-table,
+        .iftop-meta,
+        .terminal-header,
+        #connection-info {
             writing-mode: horizontal-tb;
             text-orientation: mixed;
         }
-
     </style>
 </head>
 
@@ -189,7 +206,7 @@ https://github.com/gzqccnu/moniOS
             <div class="status-indicator">
                 <div class="status-dot"></div>
                 <span class="status-text">已连接</span>
-                <span class="last-update">最后更新: <span id="sidebar-last-update">--:--:--</span></span>
+                <span class="last-update">最后更新: <span id="last-update-time">--:--:--</span></span>
             </div>
             <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
 
@@ -244,10 +261,12 @@ https://github.com/gzqccnu/moniOS
                             <li><span class="label">主机名:</span> <span class="value" id="hostname">加载中...</span></li>
                             <li><span class="label">操作系统:</span> <span class="value" id="os-name">加载中...</span></li>
                             <li><span class="label">内核版本:</span> <span class="value" id="os-version">加载中...</span></li>
-                            <li><span class="label">计算机名:</span> <span class="value" id="computer-name">加载中...</span></li>
+                            <li><span class="label">计算机名:</span> <span class="value" id="computer-name">加载中...</span>
+                            </li>
                             <li><span class="label">CPU架构:</span> <span class="value" id="cpu-arch">加载中...</span></li>
                             <li><span class="label">CPU型号:</span> <span class="value" id="cpu-model">加载中...</span></li>
-                            <li><span class="label">物理CPU核心:</span> <span class="value" id="cpu-cores">加载中...</span></li>
+                            <li><span class="label">物理CPU核心:</span> <span class="value" id="cpu-cores">加载中...</span>
+                            </li>
                             <li><span class="label">系统运行时间:</span> <span class="value" id="uptime">加载中...</span></li>
                         </ul>
                     </div>
@@ -274,7 +293,8 @@ https://github.com/gzqccnu/moniOS
                             </div>
                         </div>
                         <ul class="data-list">
-                            <li><span class="label">内存总量:</span> <span class="value" id="total-memory">加载中...</span></li>
+                            <li><span class="label">内存总量:</span> <span class="value" id="total-memory">加载中...</span>
+                            </li>
                             <li><span class="label">可用内存:</span> <span class="value" id="free-memory">加载中...</span></li>
                             <li><span class="label">磁盘总空间:</span> <span class="value" id="total-disk">加载中...</span></li>
                             <li><span class="label">可用磁盘空间:</span> <span class="value" id="free-disk">加载中...</span></li>
@@ -284,9 +304,12 @@ https://github.com/gzqccnu/moniOS
                     <div class="card">
                         <h2>网络信息</h2>
                         <ul class="data-list" id="network-info">
-                            <li><span class="label">主要IP地址:</span> <span class="value" id="primary-ip">加载中...</span></li>
-                            <li><span class="label">MAC地址:</span> <span class="value" id="mac-address">加载中...</span></li>
-                            <li><span class="label">DNS服务器:</span> <span class="value" id="dns-servers">加载中...</span></li>
+                            <li><span class="label">主要IP地址:</span> <span class="value" id="primary-ip">加载中...</span>
+                            </li>
+                            <li><span class="label">MAC地址:</span> <span class="value" id="mac-address">加载中...</span>
+                            </li>
+                            <li><span class="label">DNS服务器:</span> <span class="value" id="dns-servers">加载中...</span>
+                            </li>
                             <li><span class="label">网关:</span> <span class="value" id="gateway">加载中...</span></li>
                         </ul>
                         <div>
@@ -337,26 +360,33 @@ https://github.com/gzqccnu/moniOS
                             <span>进程: <span id="htop-process-count">0</span></span>
                             <span style="margin-left: 20px;">线程: <span id="htop-thread-count">0</span></span>
                             <span style="margin-left: 20px;">正在运行: <span id="htop-running-count">0</span></span>
-                            <span style="margin-left: 20px;">负载平均值: <span id="htop-load-avg">0.00 0.00 0.00</span></span>
+                            <span style="margin-left: 20px;">负载平均值: <span id="htop-load-avg">0.00 0.00
+                                    0.00</span></span>
                             <span style="margin-left: 20px;">运行时间: <span id="htop-uptime">0天 00:00:00</span></span>
                         </div>
 
                         <div>
-                            <div>CPU[<span style="color:#3498db;">用户</span>:<span id="htop-cpu-user">0.0%</span> <span style="color:#2ecc71;">系统</span>:<span id="htop-cpu-system">0.0%</span> <span style="color:#e74c3c;">中断</span>:<span id="htop-cpu-irq">0.0%</span> <span style="color:#f1c40f;">空闲</span>:<span id="htop-cpu-idle">0.0%</span>]</div>
+                            <div>CPU[<span style="color:#3498db;">用户</span>:<span id="htop-cpu-user">0.0%</span> <span
+                                    style="color:#2ecc71;">系统</span>:<span id="htop-cpu-system">0.0%</span> <span
+                                    style="color:#e74c3c;">中断</span>:<span id="htop-cpu-irq">0.0%</span> <span
+                                    style="color:#f1c40f;">空闲</span>:<span id="htop-cpu-idle">0.0%</span>]</div>
                             <div class="cpu-bars" id="htop-cpu-bars">
                                 <!-- CPU bars will be dynamically generated -->
                             </div>
                         </div>
 
                         <div>
-                            <div>内存[<span style="color:#3498db;">已用</span>:<span id="htop-mem-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-mem-free">0K</span> <span style="color:#e74c3c;">缓冲区</span>:<span id="htop-mem-buff">0K</span>]</div>
+                            <div>内存[<span style="color:#3498db;">已用</span>:<span id="htop-mem-used">0K</span> <span
+                                    style="color:#2ecc71;">可用</span>:<span id="htop-mem-free">0K</span> <span
+                                    style="color:#e74c3c;">缓冲区</span>:<span id="htop-mem-buff">0K</span>]</div>
                             <div class="memory-bar">
                                 <div class="memory-fill" id="htop-memory-fill" style="width: 0%;"></div>
                             </div>
                         </div>
 
                         <div>
-                            <div>交换空间[<span style="color:#3498db;">已用</span>:<span id="htop-swap-used">0K</span> <span style="color:#2ecc71;">可用</span>:<span id="htop-swap-free">0K</span>]</div>
+                            <div>交换空间[<span style="color:#3498db;">已用</span>:<span id="htop-swap-used">0K</span> <span
+                                    style="color:#2ecc71;">可用</span>:<span id="htop-swap-free">0K</span>]</div>
                             <div class="memory-bar">
                                 <div class="memory-fill" id="htop-swap-fill" style="width: 0%;"></div>
                             </div>
@@ -424,16 +454,19 @@ https://github.com/gzqccnu/moniOS
                         <h3>常用查询示例：</h3>
                         <ul>
                             <li><a href="#" onclick="setOSQueryExample('.tables')">显示所有可用表</a></li>
-                            <li><a href="#" onclick="setOSQueryExample('SELECT * FROM processes LIMIT 10;')">查看前10个进程</a></li>
+                            <li><a href="#"
+                                    onclick="setOSQueryExample('SELECT * FROM processes LIMIT 10;')">查看前10个进程</a></li>
                             <li><a href="#" onclick="setOSQueryExample('SELECT * FROM users;')">列出所有用户</a></li>
                             <li><a href="#" onclick="setOSQueryExample('SELECT * FROM system_info;')">系统信息</a></li>
                             <li><a href="#" onclick="setOSQueryExample('SELECT * FROM listening_ports;')">监听端口</a></li>
-			                <li><a href="#" onclick="setOSQueryExample('SELECT * FROM systemd_units LIMIT 10;')">系统服务</a></li>
+                            <li><a href="#"
+                                    onclick="setOSQueryExample('SELECT * FROM systemd_units LIMIT 10;')">系统服务</a></li>
                         </ul>
                     </div>
                     <div>
                         <h3>查询结果：</h3>
-                        <pre id="osquery-results" style="background-color: #f9f9f9; padding: 15px; overflow: auto; border-radius: 5px; border: 1px solid #ddd;">准备执行查询...</pre>
+                        <pre id="osquery-results"
+                            style="background-color: #f9f9f9; padding: 15px; overflow: auto; border-radius: 5px; border: 1px solid #ddd;">准备执行查询...</pre>
                     </div>
                 </div>
             </div>
@@ -457,16 +490,16 @@ https://github.com/gzqccnu/moniOS
                     <table class="perf-table">
                         <thead>
                             <tr>
-                            <th>Source</th>
-                            <th>Destination</th>
-                            <th>Process</th>
-                            <th>Sent (bytes)</th>
-                            <th>Received (bytes)</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Process</th>
+                                <th>Sent (bytes)</th>
+                                <th>Received (bytes)</th>
                             </tr>
                         </thead>
                         <tbody id="iftop-connections">
                             <tr>
-                            <td colspan="5" class="no-data">Loading network data…</td>
+                                <td colspan="5" class="no-data">Loading network data…</td>
                             </tr>
                         </tbody>
                     </table>
@@ -483,10 +516,10 @@ https://github.com/gzqccnu/moniOS
                             <i class="fas fa-server"></i> 连接设置
                         </h2>
                         <form id="connection-form">
-                                        <div class="form-group">
-                <label for="ssh_hostname">主机地址</label>
-                <input type="text" id="ssh_hostname" placeholder="例如: 192.168.1.100" required>
-            </div>
+                            <div class="form-group">
+                                <label for="ssh_hostname">主机地址</label>
+                                <input type="text" id="ssh_hostname" placeholder="例如: 192.168.1.100" required>
+                            </div>
                             <div class="form-group">
                                 <label for="port">端口</label>
                                 <input type="number" id="port" placeholder="22" value="22" min="1" max="65535" required>
@@ -539,4 +572,5 @@ https://github.com/gzqccnu/moniOS
     <script src="/js/terminal.js"></script>
     <script src="/js/sidebar.js"></script>
 </body>
+
 </html>
