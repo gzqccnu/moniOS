@@ -48,7 +48,7 @@
 - **必需依赖**：`osquery`、`htop`、`iftop`
 
 ## 安装步骤
-> [!提示]
+> [!Tip]
 > 你可以直接运行以下脚本快速安装：
 > ```bash
 > curl -o monios.sh https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
@@ -101,14 +101,14 @@ source .venv/bin/activate
 > 浏览器访问：
 > `http://localhost:6789`
 
-> [!重要]
+> [!Important]
 > 必须使用sudo提升权限运行，否则无法使用网络流量监控功能
 
-> [!注意]
+> [!Note]
 > 若无法通过 `pip install -r requirements.txt` 安装依赖，
 > 可直接单独安装所需包：`pip install 包名`。
 
-> [!提示]
+> [!Tip]
 > - **网络使用数据** 会存储在历史文件中，用于趋势分析和数据回溯。
 > - 原始代码中的 **SQL查询** 仅支持 `SELECT` 语句和osquery特殊命令（如 `.tables`），
 >   如需解除限制，可修改 **/utils/osquery-handler.py** 中的相关代码。
@@ -140,6 +140,13 @@ source .venv/bin/activate
 
 - osquery功能已实现SQL注入防护，但仍建议仅在安全环境中使用
 
-> [!警告]
+> [!Warning]
 > 整个项目未提供加密传输功能！若需在企业或公共网络中使用，
 > 建议配置HTTPS或其他安全防护措施。
+
+## 贡献者
+<div align=center style="margin-top: 30px;">
+  <a href="https://github.com/gzqccnu/monios/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=gzqccnu/monios" />
+  </a>
+</div>
