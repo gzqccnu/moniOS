@@ -98,7 +98,11 @@ source .venv/bin/activate
 ```
 > Usage
 > Start the server:
-> `sudo python3 app.py` or `sudo uv run python app.py`
+> ```bash
+> sudo -E python3 app.py
+> # or 
+> sudo -E uv run python app.py
+> ```
 > Access via browser:
 > `http://localhost:6789`
 
