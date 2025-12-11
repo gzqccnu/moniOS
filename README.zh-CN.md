@@ -97,7 +97,11 @@ source .venv/bin/activate
 ```
 > 使用方法
 > 启动服务器：
-> `sudo python3 app.py` 或 `sudo uv run python app.py`
+> ```bash
+> sudo -E python3 app.py
+> # or 
+> sudo -E uv run python app.py
+> ```
 > 浏览器访问：
 > `http://localhost:6789`
 
