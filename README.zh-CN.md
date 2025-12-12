@@ -51,13 +51,13 @@
 > [!Tip]
 > 你可以直接运行以下脚本快速安装：
 > ```bash
-> curl -o monios.sh https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> curl -o monios.sh https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
 > chmod +x monios.sh
 > ./monios.sh
 > ```
 > 若上述命令无响应，可尝试使用代理加速：
 > ```bash
-> curl -o monios.sh https://gh-proxy.com/https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> curl -o monios.sh https://gh-proxy.com/https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
 > chmod +x monios.sh
 > ./monios.sh
 > ```
@@ -73,7 +73,7 @@ sudo apt install htop iftop
 将仓库克隆或下载到你的Linux服务器：
 
 ```bash
-git clone https://github.com/gzqccnu/moniOS.git
+git clone https://github.com/lrisguan/moniOS.git
 cd moniOS
 ```
 
@@ -150,7 +150,7 @@ source .venv/bin/activate
 
 ## 贡献者
 <div align=center style="margin-top: 30px;">
-  <a href="https://github.com/gzqccnu/monios/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=gzqccnu/monios" />
+  <a href="https://github.com/lrisguan/monios/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=lrisguan/monios" />
   </a>
 </div>

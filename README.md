@@ -52,13 +52,13 @@ Login your server or other server in the web.
 > [!Tip]
 > You can just run script:
 > ```bash
-> curl -o monios.sh https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> curl -o monios.sh https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
 > chmod +x monios.sh
 > ./monios.sh
 > ```
 > if above command had no reactions, you can also run:
 > ```bash
-> curl -o monios.sh https://gh-proxy.com/https://github.com/gzqccnu/moniOS/raw/refs/heads/main/monios.sh
+> curl -o monios.sh https://gh-proxy.com/https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
 > chmod +x monios.sh
 > ./monios.sh
 > ```
@@ -74,7 +74,7 @@ sudo apt install htop iftop
 Clone or download this repository to your Linux server:
 
 ```bash
-git clone https://github.com/gzqccnu/moniOS.git
+git clone https://github.com/lrisguan/moniOS.git
 cd moniOS
 ```
 
@@ -153,7 +153,7 @@ To extend functionality, modify these files:
 
 ## Contributers
 <div align=center style="margin-top: 30px;">
-  <a href="https://github.com/gzqccnu/monios/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=gzqccnu/monios" />
+  <a href="https://github.com/lrisguan/monios/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=lrisguan/monios" />
   </a>
 </div>
