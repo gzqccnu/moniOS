@@ -49,22 +49,6 @@ Login your server or other server in the web.
 - **Required**: `osquery` 、`htop`、`iftop`
 
 ## Installation Steps
-> [!Tip]
-> You can just run script:
-> ```bash
-> curl -o monios.sh https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
-> chmod +x monios.sh
-> ./monios.sh
-> ```
-> if above command had no reactions, you can also run:
-> ```bash
-> curl -o monios.sh https://gh-proxy.com/https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
-> chmod +x monios.sh
-> ./monios.sh
-> ```
-> to install and run this project
-
-or you can abey following steps.
 > You must install **htop**, **iftop**.
 > In Debian/Ubuntu, you can run command:
 ```bash 

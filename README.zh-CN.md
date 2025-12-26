@@ -48,22 +48,6 @@
 - **必需依赖**：`osquery`、`htop`、`iftop`
 
 ## 安装步骤
-> [!Tip]
-> 你可以直接运行以下脚本快速安装：
-> ```bash
-> curl -o monios.sh https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
-> chmod +x monios.sh
-> ./monios.sh
-> ```
-> 若上述命令无响应，可尝试使用代理加速：
-> ```bash
-> curl -o monios.sh https://gh-proxy.com/https://github.com/lrisguan/moniOS/raw/refs/heads/main/monios.sh
-> chmod +x monios.sh
-> ./monios.sh
-> ```
-> 脚本将自动完成安装并启动项目
-
-或者按照以下步骤手动安装：
 > 必须先安装 **htop** 和 **iftop**。
 > 在Debian/Ubuntu系统中，可运行以下命令：
 ```bash 

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2025 gzqccnu. under Apache, GPL LICENCE
-https://github.com/gzqccnu/moniOS
+Copyright (c) 2025 lrisguan. under Apache, GPL LICENCE
+https://github.com/lrisguan/moniOS
 */
 
 // 设置OSquery示例
