@@ -8,6 +8,7 @@ dependencies = [
     "flask>=3.0.3",
     "flask-cors>=5.0.0",
     "flask-socketio>=5.5.1",
+    "gunicorn>=23.0.0",
     "netifaces>=0.11.0",
     "paramiko>=3.5.1",
     "psutil>=7.1.3",
