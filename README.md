@@ -84,8 +84,6 @@ source .venv/bin/activate
 > Start the server:
 > ```bash
 > sudo -E gunicorn app:app -b 127.0.0.1:6789
-> # or 
-> sudo -E gunicorn app:app -b 127.0.0.1:6789
 > ```
 > Access via browser:
 > `http://localhost:6789`

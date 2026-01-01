@@ -82,9 +82,7 @@ source .venv/bin/activate
 > 使用方法
 > 启动服务器：
 > ```bash
-> sudo -E python3 app.py
-> # or 
-> sudo -E uv run python app.py
+> sudo -E gunicorn app:app -b 127.0.0.1:6789
 > ```
 > 浏览器访问：
 > `http://localhost:6789`
