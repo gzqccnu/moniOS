@@ -53,6 +53,8 @@
 ```bash 
 sudo apt install htop iftop 
 ```
+> [!Important]
+> 然后你需要下载 osquery，请去往[osquery](https://osquery.io/downloads/official/)。
 
 将仓库克隆或下载到你的Linux服务器：
 

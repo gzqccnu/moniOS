@@ -54,6 +54,8 @@ Login your server or other server in the web.
 ```bash 
 sudo apt install htop iftop 
 ```
+> [!Important]
+> Then you should install osquery. Please refer to [osquery](https://osquery.io/downloads/official/)
 
 Clone or download this repository to your Linux server:
 
